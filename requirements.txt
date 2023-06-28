@@ -1,0 +1,4 @@
+batman-package
+lmfit
+numpy
+scipy
