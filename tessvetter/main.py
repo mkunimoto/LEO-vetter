@@ -169,8 +169,9 @@ class TCELightCurve:
         if verbose:
             print("Done!")
 
-    def save_metrics(self, save_dir="."):
-        save_file = os.path.join(save_dir, f"{self.tic}.{self.planetno}.metrics")
+    def save_metrics(self, save_file=None):
+        if save_file is None:
+            save_file = f"{self.tic}.{self.planetno}.metrics"
         with open(save_file, "w") as f:
             writer = csv.writer(f, delimiter=",")
             writer.writerow(self.metrics.keys())

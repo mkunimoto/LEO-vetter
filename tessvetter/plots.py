@@ -70,7 +70,7 @@ def modshift_oddeven(label, ax, phase, flux, deps, phs, qtran, xtext=0.5, ytext=
     modshift_box(label, ax, bin_cent, bin_mean, bin_err, phs, qtran, xtext, ytext)
 
 
-def plot_modshift(tlc, save_fig=False, save_dir="."):
+def plot_modshift(tlc, save_fig=False, save_file=None):
     phase, flux, deps = expanded_phase(tlc.phase, tlc.flux, tlc.dep_series)
     bin_cent, bin_mean, bin_err = binned_data(phase, flux, int(10 * 1.5 / tlc.qtran))
     # Set up plot
@@ -157,7 +157,8 @@ def plot_modshift(tlc, save_fig=False, save_dir="."):
     for ax in [axOdd, axEven]:
         ax.set_ylim([axPri.get_ylim()[0], axPri.get_ylim()[1]])
     if save_fig:
-        save_file = os.path.join(save_dir, f"{tlc.tic}.{tlc.planetno}.modshift.png")
+        if save_file is None:
+            save_file = f"{tlc.tic}.{tlc.planetno}.modshift.png"
         plt.savefig(save_file, bbox_inches="tight", dpi=150)
 
 
@@ -476,7 +477,7 @@ def trapezoid_setup(tlc):
     return per, epo, dur, mtime, model, odd_model, even_model
 
 
-def plot_summary(tlc, star, save_fig=False, save_dir="."):
+def plot_summary(tlc, star, save_fig=False, save_file=None):
     # Set up plotting
     fig = plt.figure(figsize=(10, 7))
     gs = gridspec.GridSpec(nrows=5, ncols=6, hspace=0.5, wspace=0.3)
@@ -542,11 +543,12 @@ def plot_summary(tlc, star, save_fig=False, save_dir="."):
     for ax in [axPhase, axClose, axOdd, axEven]:
         ax.set_ylim([low - 4 * sigma, 1 + 4 * sigma])
     if save_fig:
-        save_file = os.path.join(save_dir, f"{tlc.tic}.{tlc.planetno}.summary.png")
+        if save_file is None:
+            save_file = f"{tlc.tic}.{tlc.planetno}.summary.png"
         plt.savefig(save_file, bbox_inches="tight", dpi=150)
 
 
-def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_dir="."):
+def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_file=None):
     # Set up plotting
     fig = plt.figure(figsize=(12.5, 7))
     gs = gridspec.GridSpec(nrows=5, ncols=8, hspace=0.5, wspace=0.3)
@@ -694,5 +696,6 @@ def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_dir="."):
     for ax in [axSNR1, axSNR2, axDiff1, axDiff2, axDir1, axDir2]:
         ax.axis("off")
     if save_fig:
-        save_file = os.path.join(save_dir, f"{tlc.tic}.{tlc.planetno}.full.png")
+        if save_file is None:
+            save_file = f"{tlc.tic}.{tlc.planetno}.full.png"
         plt.savefig(save_file, bbox_inches="tight", dpi=150)
