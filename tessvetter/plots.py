@@ -59,9 +59,9 @@ def modshift_box(label, ax, x, y, dy, phs, qtran, xtext=0.5, ytext=0.9):
         horizontalalignment="center",
         verticalalignment="center",
         transform=ax.transAxes,
-        fontsize=fs+2,
+        fontsize=fs + 2,
     )
-    ax.tick_params(axis="both", which="both", labelsize=fs+2)
+    ax.tick_params(axis="both", which="both", labelsize=fs + 2)
 
 
 def modshift_oddeven(label, ax, phase, flux, deps, phs, qtran, xtext=0.5, ytext=0.9):
@@ -78,10 +78,12 @@ def plot_modshift(tlc, save_fig=False, save_file=None):
     gs = gridspec.GridSpec(nrows=4, ncols=3, hspace=0.3, wspace=0.3)
     # Phase diagram
     axPhase = fig.add_subplot(gs[0, :])
-    axPhase.set_title(f"TIC-{tlc.tic}.{tlc.planetno}: Modshift results",fontsize=fs+2)
+    axPhase.set_title(
+        f"TIC-{tlc.tic}.{tlc.planetno}: Modshift results", fontsize=fs + 2
+    )
     axPhase.plot(phase, flux, "r.", ms=1)
     axPhase.plot(bin_cent, bin_mean, "b.", ms=2)
-    axPhase.set_xlabel("Phase",fontsize=fs+2)
+    axPhase.set_xlabel("Phase", fontsize=fs + 2)
     # Depth time series
     axDeps = fig.add_subplot(gs[1, :])
     axDeps.plot(phase, -deps, "k", ms=1)
@@ -89,17 +91,17 @@ def plot_modshift(tlc, save_fig=False, save_file=None):
     axDeps.axhline(y=3 * tlc.err * 1e6, color="b")
     axDeps.axhline(y=-3 * tlc.err * 1e6, color="b")
     for ax in [axPhase, axDeps]:
-        ax.set_ylabel("Flux (ppm)",fontsize=fs+2)
+        ax.set_ylabel("Flux (ppm)", fontsize=fs + 2)
         ax.axvspan(0.75, 1.25, alpha=0.5, color="grey")
         ax.set_xlim([-0.25, 1.25])
-        ax.tick_params(axis="both", which="both", labelsize=fs+2)
+        ax.tick_params(axis="both", which="both", labelsize=fs + 2)
     # Modshift results
     gs_sub = gridspec.GridSpecFromSubplotSpec(
         nrows=2, ncols=3, subplot_spec=gs[2:, :], wspace=0.5
     )
     # Primary event
     axPri = fig.add_subplot(gs_sub[0, 0])
-    axPri.set_ylabel("Flux (ppm)",fontsize=fs+2)
+    axPri.set_ylabel("Flux (ppm)", fontsize=fs + 2)
     modshift_box(
         "Primary", axPri, bin_cent, bin_mean, bin_err, tlc.metrics["phs_pri"], tlc.qtran
     )
@@ -108,8 +110,8 @@ def plot_modshift(tlc, save_fig=False, save_file=None):
         phs = tlc.metrics["phs_sec"]
         axSec = fig.add_subplot(gs_sub[1, 0])
         modshift_box("Secondary", axSec, bin_cent, bin_mean, bin_err, phs, tlc.qtran)
-        axSec.set_xlabel("Phase",fontsize=fs+2)
-        axSec.set_ylabel("Flux (ppm)",fontsize=fs+2)
+        axSec.set_xlabel("Phase", fontsize=fs + 2)
+        axSec.set_ylabel("Flux (ppm)", fontsize=fs + 2)
         phs = phs - 1 if phs > 0.75 else phs
         axDeps.axvline(x=phs, ymax=0.03, marker="^", color="k")
     # Tertiary events
@@ -117,7 +119,7 @@ def plot_modshift(tlc, save_fig=False, save_file=None):
         phs = tlc.metrics["phs_ter"]
         axTer = fig.add_subplot(gs_sub[1, 1])
         modshift_box("Tertiary", axTer, bin_cent, bin_mean, bin_err, phs, tlc.qtran)
-        axTer.set_xlabel("Phase",fontsize=fs+2)
+        axTer.set_xlabel("Phase", fontsize=fs + 2)
         phs = phs - 1 if phs > 0.75 else phs
         axDeps.axvline(x=phs, ymax=0.03, marker="^", color="k")
     # Positive events
@@ -127,7 +129,7 @@ def plot_modshift(tlc, save_fig=False, save_file=None):
         modshift_box(
             "Positive", axPos, bin_cent, bin_mean, bin_err, phs, tlc.qtran, 0.5, 0.1
         )
-        axPos.set_xlabel("Phase",fontsize=fs+2)
+        axPos.set_xlabel("Phase", fontsize=fs + 2)
         phs = phs - 1 if phs > 0.75 else phs
         axDeps.axvline(x=phs, ymin=0.97, marker="v", color="k")
     # Odd and even events
@@ -281,7 +283,7 @@ def plot_close_phase(ax, time, flux, per, epo, dur):
     ax.tick_params(axis="both", which="both", labelsize=fs)
 
 
-def plot_odd_even(axOdd, axEven, time, flux, per, epo, dur):
+def plot_odd_even(axOdd, axEven, time, flux, per, epo, dur, sig):
     qtran = dur / per
     # Identify odd and even cadences
     phase = np.mod(time - epo, 2 * per) / per
@@ -296,9 +298,24 @@ def plot_odd_even(axOdd, axEven, time, flux, per, epo, dur):
         axOdd.plot(phase[odd_tran] * per * 24, flux[odd_tran], ".", color=data_colour)
         axOdd.plot(odd_cent * per * 24, odd_mean, ".", color=bin_colour)
     if np.any(even_tran):
-        even_cent, even_mean, even_err = binned_data(phase[even_tran], flux[even_tran], 30)
-        axEven.plot(phase[even_tran] * per * 24, flux[even_tran], ".", color=data_colour)
+        even_cent, even_mean, even_err = binned_data(
+            phase[even_tran], flux[even_tran], 30
+        )
+        axEven.plot(
+            phase[even_tran] * per * 24, flux[even_tran], ".", color=data_colour
+        )
         axEven.plot(even_cent * per * 24, even_mean, ".", color=bin_colour)
+    axEven.text(
+        0.96,
+        0.05,
+        f"({sig:.1f}$\sigma$)",
+        fontsize=fs + 1,
+        color=label_colour,
+        path_effects=[pe.withStroke(linewidth=4, foreground="w")],
+        horizontalalignment="right",
+        verticalalignment="bottom",
+        transform=axEven.transAxes,
+    )
     for ax, label in zip([axOdd, axEven], ["Odd", "Even"]):
         ax.set_xlim([-1.5 * dur * 24, 1.5 * dur * 24])
         ax.set_xlabel("Hours from midtransit", fontsize=fs)
@@ -317,7 +334,7 @@ def plot_odd_even(axOdd, axEven, time, flux, per, epo, dur):
         ax.set_yticks([])
 
 
-def plot_secondary(ax, time, flux, per, epo, dur, phs):
+def plot_secondary(ax, time, flux, per, epo, dur, phs, dep, sig):
     qtran = dur / per
     phase, time, flux = sort_lightcurve(time, flux, per, epo)
     phase -= phs
@@ -337,6 +354,17 @@ def plot_secondary(ax, time, flux, per, epo, dur, phs):
         color=label_colour,
         path_effects=[pe.withStroke(linewidth=4, foreground="w")],
         horizontalalignment="left",
+        verticalalignment="bottom",
+        transform=ax.transAxes,
+    )
+    ax.text(
+        0.98,
+        0.05,
+        f"{int(dep)} ppm ({sig:.1f}$\sigma$)",
+        fontsize=fs + 1,
+        color=label_colour,
+        path_effects=[pe.withStroke(linewidth=4, foreground="w")],
+        horizontalalignment="right",
         verticalalignment="bottom",
         transform=ax.transAxes,
     )
@@ -393,13 +421,14 @@ def plot_individual_transits(ax, time, flux, per, epo, dur):
     ax.set_yticks([])
 
 
-def plot_text(ax, tlc, star, per, epo, dur, spacing=0.035):
+def plot_text(ax, tlc, star, per, epo, dur, dep, spacing=0.043):
     # Define properties to include on summary page
     properties = [
         "TCE properties:",
         f"Period = {per:.4f} days",
         f"Epoch = {epo:.4f} BJTD",
         f"Duration = {24*dur:.2f} hours",
+        f"Depth = {int(dep*1e6)} ppm",
         f"S/N = {tlc.metrics['MES']:.1f}",
         "",
         "Model properties:",
@@ -498,14 +527,17 @@ def plot_summary(tlc, star, save_fig=False, save_file=None):
     if ~np.isnan(tlc.metrics["transit_aic"]):
         per, epo, dur, mtime, model, odd_model, even_model = transit_setup(tlc)
         low = np.nanmin(model)
+        dep = max(model) - min(model)
         plot_model = True
     elif ~np.isnan(tlc.metrics["trap_aic"]):
         per, epo, dur, mtime, model, odd_model, even_model = trapezoid_setup(tlc)
         low = np.nanmin(model)
+        dep = max(model) - min(model)
         plot_model = True
     else:
         per, epo, dur = tlc.per, tlc.epo, tlc.dur
         low = 1 - tlc.dep
+        dep = tlc.dep
         plot_model = False
     if np.isnan(dur):
         dur = tlc.metrics["dur"]
@@ -520,7 +552,9 @@ def plot_summary(tlc, star, save_fig=False, save_file=None):
     if plot_model:
         axClose.plot((mtime - epo) * 24, model, "r")
     # Plot odd transits
-    plot_odd_even(axOdd, axEven, tlc.time, tlc.flux, per, epo, dur)
+    plot_odd_even(
+        axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, tlc.metrics["trap_sig_oe"]
+    )
     if plot_model:
         axOdd.plot((mtime - epo) * 24, odd_model, color=odd_colour)
     if plot_model:
@@ -531,7 +565,17 @@ def plot_summary(tlc, star, save_fig=False, save_file=None):
         if phs > 0.75:
             phs -= 1
         axPhase.axvline(x=phs, ymax=0.03, marker="^", color="k")
-        plot_secondary(axSec, tlc.time, tlc.flux, per, epo, dur, phs)
+        plot_secondary(
+            axSec,
+            tlc.time,
+            tlc.flux,
+            per,
+            epo,
+            dur,
+            phs,
+            tlc.metrics["dep_sec"] * 1e6,
+            tlc.metrics["sig_sec"],
+        )
     else:
         axSec.axis("off")
     # Plot half phase
@@ -540,7 +584,7 @@ def plot_summary(tlc, star, save_fig=False, save_file=None):
     # Plot individual transits
     plot_individual_transits(axTrans, tlc.time, tlc.flux, per, epo, dur)
     # Add planet properties
-    plot_text(axText, tlc, star, per, epo, dur)
+    plot_text(axText, tlc, star, per, epo, dur, dep)
     # Set axis limits
     sigma = 1.4826 * MAD(tlc.flux[~tlc.near_tran])
     for ax in [axPhase, axClose, axOdd, axEven]:
@@ -578,14 +622,17 @@ def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_file=None):
     if ~np.isnan(tlc.metrics["transit_aic"]):
         per, epo, dur, mtime, model, odd_model, even_model = transit_setup(tlc)
         low = np.nanmin(model)
+        dep = max(model) - min(model)
         plot_model = True
     elif ~np.isnan(tlc.metrics["trap_aic"]):
         per, epo, dur, mtime, model, odd_model, even_model = trapezoid_setup(tlc)
         low = np.nanmin(model)
+        dep = max(model) - min(model)
         plot_model = True
     else:
         per, epo, dur = tlc.per, tlc.epo, tlc.dur
         low = 1 - tlc.dep
+        dep = tlc.dep
         plot_model = False
     if np.isnan(dur):
         dur = tlc.metrics["dur"]
@@ -600,7 +647,9 @@ def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_file=None):
     if plot_model:
         axClose.plot((mtime - epo) * 24, model, "r")
     # Plot odd transits
-    plot_odd_even(axOdd, axEven, tlc.time, tlc.flux, per, epo, dur)
+    plot_odd_even(
+        axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, tlc.metrics["trap_sig_oe"]
+    )
     if plot_model:
         axOdd.plot((mtime - epo) * 24, odd_model, color=odd_colour)
     if plot_model:
@@ -611,7 +660,17 @@ def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_file=None):
         if phs > 0.75:
             phs -= 1
         axPhase.axvline(x=phs, ymax=0.03, marker="^", color="k")
-        plot_secondary(axSec, tlc.time, tlc.flux, per, epo, dur, phs)
+        plot_secondary(
+            axSec,
+            tlc.time,
+            tlc.flux,
+            per,
+            epo,
+            dur,
+            phs,
+            tlc.metrics["dep_sec"] * 1e6,
+            tlc.metrics["sig_sec"],
+        )
     else:
         axSec.axis("off")
     # Plot half phase
@@ -620,7 +679,7 @@ def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_file=None):
     # Plot individual transits
     plot_individual_transits(axTrans, tlc.time, tlc.flux, per, epo, dur)
     # Add planet properties
-    plot_text(axText, tlc, star, per, epo, dur)
+    plot_text(axText, tlc, star, per, epo, dur, dep)
     # Set axis limits
     sigma = 1.4826 * MAD(tlc.flux[~tlc.near_tran])
     for ax in [axPhase, axClose, axOdd, axEven]:
