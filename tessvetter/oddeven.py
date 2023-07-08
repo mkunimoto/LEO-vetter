@@ -31,7 +31,9 @@ def box(tlc):
     else:
         even_dep, even_err = np.nan, np.nan
     tlc.metrics["odd_dep"] = odd_dep
+    tlc.metrics["odd_err"] = odd_err
     tlc.metrics["even_dep"] = even_dep
+    tlc.metrics["even_err"] = even_err
     tlc.metrics["sig_oe"] = diff_significance(odd_dep, even_dep, odd_err, even_err)
 
 
