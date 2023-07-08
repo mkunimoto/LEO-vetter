@@ -33,7 +33,8 @@ def quadratic_ldc(teff, logg, feh=0.0):
         u1 = interp_u1(teff, logg, feh)
         u2 = interp_u2(teff, logg, feh)
     else:
-        feh = np.atleast_1d(feh)
+        if feh == 0.0:
+            feh = np.zeros_like(teff)
         interp_u1, interp_u2 = get_interpolator(False)
         u1 = interp_u1(teff, logg, feh)
         u2 = interp_u2(teff, logg, feh)
