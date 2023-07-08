@@ -143,11 +143,12 @@ class TCELightCurve:
             print("Estimating SES and MES time series...")
         self.get_SES_MES()
         if verbose:
-            print("Fitting transit and trapezoid models...")
-        fits.transit(self, star["u1"], star["u2"])
+            print("Fitting linear, trapezoid, and transit models...")
+        fits.linear(self)
         fits.trapezoid(self)
         fits.half_trapezoid(self, "left")
         fits.half_trapezoid(self, "right")
+        fits.transit(self, star["u1"], star["u2"])
         if verbose:
             print("Running SWEET test...")
         fits.sweet(self)
