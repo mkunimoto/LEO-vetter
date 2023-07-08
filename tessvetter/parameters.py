@@ -81,6 +81,10 @@ def trapezoid_duration(per, qtran, per_err, qtran_err):
     return dur, dur_err
 
 
+def get_q(per, rho):
+    return np.arcsin(0.2375 / rho**(1./3) / per**(2./3)) / np.pi
+
+
 def derived_parameters(tlc, star, A=0.3):
     Rs = star["rad"]
     Ms = star["mass"]
@@ -88,6 +92,7 @@ def derived_parameters(tlc, star, A=0.3):
     Rs_err = star["e_rad"]
     Ms_err = star["e_mass"]
     Teff_err = star["e_Teff"]
+    rho = star["rho"]
     # Set default parameters
     per, per_err = tlc.metrics["per"], np.nan
     RpRs, RpRs_err = np.sqrt(tlc.metrics["dep"]), np.nan
@@ -121,6 +126,8 @@ def derived_parameters(tlc, star, A=0.3):
             tlc.metrics["transit_b_err"],
             tlc.metrics["transit_aRs_err"],
         )
+    # Expected qtran (duration/period) for a circular orbit 
+    qtran_exp = get_q(per, rho)
     # Planet radius
     Rp, Rp_err = planet_radius(RpRs, Rs, RpRs_err, Rs_err)
     # Semi-major axis
@@ -144,6 +151,7 @@ def derived_parameters(tlc, star, A=0.3):
         transit_dur,
         transit_dur_err,
     )
+    tlc.metrics["q"] = qtran_exp
     tlc.metrics["Rp"], tlc.metrics["Rp_err"] = Rp, Rp_err
     tlc.metrics["a"], tlc.metrics["a_err"] = a, a_err
     tlc.metrics["aRs"], tlc.metrics["aRs_err"] = aRs, aRs_err
