@@ -291,13 +291,14 @@ def plot_odd_even(axOdd, axEven, time, flux, per, epo, dur):
     # Phase fold
     phase = np.mod(time - epo, per) / per
     phase[phase > 0.5] -= 1
-    odd_cent, odd_mean, odd_err = binned_data(phase[odd_tran], flux[odd_tran], 30)
-    even_cent, even_mean, even_err = binned_data(phase[even_tran], flux[even_tran], 30)
-    # Plot
-    axOdd.plot(phase[odd_tran] * per * 24, flux[odd_tran], ".", color=data_colour)
-    axEven.plot(phase[even_tran] * per * 24, flux[even_tran], ".", color=data_colour)
-    axOdd.plot(odd_cent * per * 24, odd_mean, ".", color=bin_colour)
-    axEven.plot(even_cent * per * 24, even_mean, ".", color=bin_colour)
+    if np.any(odd_tran):
+        odd_cent, odd_mean, odd_err = binned_data(phase[odd_tran], flux[odd_tran], 30)
+        axOdd.plot(phase[odd_tran] * per * 24, flux[odd_tran], ".", color=data_colour)
+        axOdd.plot(odd_cent * per * 24, odd_mean, ".", color=bin_colour)
+    if np.any(even_tran):
+        even_cent, even_mean, even_err = binned_data(phase[even_tran], flux[even_tran], 30)
+        axEven.plot(phase[even_tran] * per * 24, flux[even_tran], ".", color=data_colour)
+        axEven.plot(even_cent * per * 24, even_mean, ".", color=bin_colour)
     for ax, label in zip([axOdd, axEven], ["Odd", "Even"]):
         ax.set_xlim([-1.5 * dur * 24, 1.5 * dur * 24])
         ax.set_xlabel("Hours from midtransit", fontsize=fs)
@@ -323,9 +324,10 @@ def plot_secondary(ax, time, flux, per, epo, dur, phs):
     phase[phase < -0.5] += 1
     phase[phase > 0.5] -= 1
     near_tran = abs(phase) < 1.5 * qtran
-    bin_cent, bin_mean, bin_err = binned_data(phase[near_tran], flux[near_tran], 30)
-    ax.plot(phase[near_tran] * per * 24, flux[near_tran], ".", color=data_colour)
-    ax.plot(bin_cent * per * 24, bin_mean, ".", color=bin_colour)
+    if np.any(near_tran):
+        bin_cent, bin_mean, bin_err = binned_data(phase[near_tran], flux[near_tran], 30)
+        ax.plot(phase[near_tran] * per * 24, flux[near_tran], ".", color=data_colour)
+        ax.plot(bin_cent * per * 24, bin_mean, ".", color=bin_colour)
     ax.set_xlim([-1.5 * dur * 24, 1.5 * dur * 24])
     ax.text(
         0.02,
@@ -349,9 +351,10 @@ def plot_half_phase(ax, time, flux, per, epo, dur):
     phase -= 0.5
     phase[phase < -0.5] += 1
     near_tran = abs(phase) < 1.5 * qtran
-    bin_cent, bin_mean, bin_err = binned_data(phase[near_tran], flux[near_tran], 30)
-    ax.plot(phase[near_tran] * per * 24, flux[near_tran], ".", color=data_colour)
-    ax.plot(bin_cent * per * 24, bin_mean, ".", color=bin_colour)
+    if np.any(near_tran):
+        bin_cent, bin_mean, bin_err = binned_data(phase[near_tran], flux[near_tran], 30)
+        ax.plot(phase[near_tran] * per * 24, flux[near_tran], ".", color=data_colour)
+        ax.plot(bin_cent * per * 24, bin_mean, ".", color=bin_colour)
     ax.set_xlim([-1.5 * dur * 24, 1.5 * dur * 24])
     ax.text(
         0.02,
