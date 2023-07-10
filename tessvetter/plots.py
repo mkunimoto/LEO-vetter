@@ -475,7 +475,7 @@ def transit_setup(tlc):
         tlc.metrics["transit_u2"],
         tlc.metrics["transit_zpt"],
     )
-    mtime = np.linspace(epo - 0.25 * per, epo + 0.75 * per, 1000)
+    mtime = np.linspace(epo - 0.25 * per, epo + 0.75 * per, int(100*per/dur))
     model = tm.model(tm.params, mtime)
     odd_params = tm.params
     odd_params["RpRs"].value = tlc.metrics["transit_odd_RpRs"]
@@ -498,7 +498,7 @@ def trapezoid_setup(tlc):
         tlc.metrics["trap_qin"],
         tlc.metrics["trap_zpt"],
     )
-    mtime = np.linspace(epo - 0.25 * per, epo + 0.75 * per, 1000)
+    mtime = np.linspace(epo - 0.25 * per, epo + 0.75 * per, int(100*per/dur))
     model = tm.model(tm.params, mtime)
     odd_params = tm.params
     odd_params["dep"].value = tlc.metrics["trap_odd_dep"]
