@@ -2,7 +2,7 @@ import numpy as np
 import batman
 
 from lmfit import Parameters
-from tessvetter.utils import phasefold
+from leo_vetter.utils import phasefold
 
 
 class Model:

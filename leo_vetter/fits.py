@@ -1,8 +1,8 @@
 import numpy as np
 
 from lmfit import minimize
-from tessvetter.models import LinearModel, TrapezoidModel, TransitModel, SineModel
-from tessvetter.utils import phasefold
+from leo_vetter.models import LinearModel, TrapezoidModel, TransitModel, SineModel
+from leo_vetter.utils import phasefold
 
 
 def linear(tlc):

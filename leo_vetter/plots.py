@@ -7,8 +7,8 @@ import os
 from brokenaxes import brokenaxes
 from scipy.stats import binned_statistic
 
-from tessvetter.utils import MAD
-from tessvetter.models import TransitModel, TrapezoidModel
+from leo_vetter.utils import MAD
+from leo_vetter.models import TransitModel, TrapezoidModel
 
 fs = 7
 ms = 5
@@ -475,7 +475,7 @@ def transit_setup(tlc):
         tlc.metrics["transit_u2"],
         tlc.metrics["transit_zpt"],
     )
-    mtime = np.linspace(epo - 0.25 * per, epo + 0.75 * per, int(100*per/dur))
+    mtime = np.linspace(epo - 0.25 * per, epo + 0.75 * per, int(100 * per / dur))
     model = tm.model(tm.params, mtime)
     odd_params = tm.params
     odd_params["RpRs"].value = tlc.metrics["transit_odd_RpRs"]
@@ -498,7 +498,7 @@ def trapezoid_setup(tlc):
         tlc.metrics["trap_qin"],
         tlc.metrics["trap_zpt"],
     )
-    mtime = np.linspace(epo - 0.25 * per, epo + 0.75 * per, int(100*per/dur))
+    mtime = np.linspace(epo - 0.25 * per, epo + 0.75 * per, int(100 * per / dur))
     model = tm.model(tm.params, mtime)
     odd_params = tm.params
     odd_params["dep"].value = tlc.metrics["trap_odd_dep"]
@@ -595,7 +595,9 @@ def plot_summary(tlc, star, save_fig=False, save_file=None):
         plt.savefig(save_file, bbox_inches="tight", dpi=150)
 
 
-def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_file=None):
+def plot_summary_with_diff(
+    tlc, star, tdi=None, images=None, catalog=None, save_fig=False, save_file=None
+):
     # Set up plotting
     fig = plt.figure(figsize=(12.5, 7))
     gs = gridspec.GridSpec(nrows=5, ncols=8, hspace=0.5, wspace=0.3)
@@ -685,11 +687,11 @@ def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_file=None):
     for ax in [axPhase, axClose, axOdd, axEven]:
         ax.set_ylim([low - 4 * sigma, 1 + 4 * sigma])
     # Plot difference and direct images
-    if tdi is not None:
+    if (tdi is not None) and (images is not None) and (catalog is not None):
         tdi.draw_pix_catalog(
-            tdi.diffImageData["diffSNRImage"],
-            tdi.catalogData,
-            tdi.catalogData["extent"],
+            images["diffSNRImage"],
+            catalog,
+            catalog["extent"],
             ax=axSNR1,
             fs=fs,
             ss=10,
@@ -697,9 +699,9 @@ def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_file=None):
             dMagThreshold=4,
         )
         tdi.draw_pix_catalog(
-            tdi.diffImageData["diffSNRImage"],
-            tdi.catalogData,
-            tdi.catalogData["extentClose"],
+            images["diffSNRImage"],
+            catalog,
+            catalog["extentClose"],
             ax=axSNR2,
             fs=fs,
             ss=40,
@@ -708,9 +710,9 @@ def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_file=None):
             close=True,
         )
         tdi.draw_pix_catalog(
-            tdi.diffImageData["diffImage"],
-            tdi.catalogData,
-            tdi.catalogData["extent"],
+            images["diffImage"],
+            catalog,
+            catalog["extent"],
             ax=axDiff1,
             fs=fs,
             ss=10,
@@ -718,9 +720,9 @@ def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_file=None):
             dMagThreshold=4,
         )
         tdi.draw_pix_catalog(
-            tdi.diffImageData["diffImage"],
-            tdi.catalogData,
-            tdi.catalogData["extentClose"],
+            images["diffImage"],
+            catalog,
+            catalog["extentClose"],
             ax=axDiff2,
             fs=fs,
             ss=40,
@@ -729,9 +731,9 @@ def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_file=None):
             close=True,
         )
         tdi.draw_pix_catalog(
-            tdi.diffImageData["meanOutTransit"],
-            tdi.catalogData,
-            tdi.catalogData["extent"],
+            images["meanOutTransit"],
+            catalog,
+            catalog["extent"],
             ax=axDir1,
             fs=fs,
             ss=10,
@@ -739,9 +741,9 @@ def plot_summary_with_diff(tlc, star, tdi=None, save_fig=False, save_file=None):
             dMagThreshold=4,
         )
         tdi.draw_pix_catalog(
-            tdi.diffImageData["meanOutTransit"],
-            tdi.catalogData,
-            tdi.catalogData["extentClose"],
+            images["meanOutTransit"],
+            catalog,
+            catalog["extentClose"],
             ax=axDir2,
             fs=fs,
             ss=40,

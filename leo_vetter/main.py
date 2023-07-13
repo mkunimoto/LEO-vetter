@@ -2,8 +2,8 @@ import numpy as np
 import csv
 import os
 
-from tessvetter.utils import phasefold, weighted_mean, weighted_err, weighted_std
-from tessvetter import fits, oddeven, individual, modshift, parameters
+from leo_vetter.utils import phasefold, weighted_mean, weighted_err, weighted_std
+from leo_vetter import fits, oddeven, individual, modshift, parameters
 
 
 class TCELightCurve:

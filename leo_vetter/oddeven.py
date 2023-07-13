@@ -1,8 +1,8 @@
 import numpy as np
 
 from lmfit import minimize
-from tessvetter.models import TrapezoidModel, TransitModel
-from tessvetter.utils import phasefold, weighted_mean
+from leo_vetter.models import TrapezoidModel, TransitModel
+from leo_vetter.utils import phasefold, weighted_mean
 
 
 def diff_significance(val1, val2, err1, err2):

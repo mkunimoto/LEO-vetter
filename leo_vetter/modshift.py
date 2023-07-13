@@ -1,7 +1,7 @@
 import numpy as np
 
 from scipy.special import erfcinv
-from tessvetter.utils import phasefold, weighted_std
+from leo_vetter.utils import phasefold, weighted_std
 
 
 def phase_and_significance(phase, MES_series):

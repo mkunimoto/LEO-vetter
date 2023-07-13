@@ -1,6 +1,6 @@
 import numpy as np
 
-from tessvetter.constants import *
+from leo_vetter.constants import *
 
 
 def planet_radius(RpRs, Rs, RpRs_err, Rs_err):

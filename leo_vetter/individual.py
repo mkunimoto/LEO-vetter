@@ -1,7 +1,7 @@
 import numpy as np
 
-from tessvetter.utils import phasefold, weighted_mean
-from tessvetter.models import TransitModel
+from leo_vetter.utils import phasefold, weighted_mean
+from leo_vetter.models import TransitModel
 
 
 def transit_events(tlc, frac=0.7):
