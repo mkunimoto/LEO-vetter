@@ -4,11 +4,11 @@ import os
 
 from scipy.interpolate import NearestNDInterpolator
 
-data_dir = os.path.join(os.path.dirname(__file__), "data")
-table15 = pd.read_csv(os.path.join(data_dir, "claret_2017_table15.csv.gz"))
-table25 = pd.read_csv(os.path.join(data_dir, "claret_2017_table25.csv.gz"))
-table15 = table15[table15["xi"] == 2]
-table25 = table25[table25["xi"] == 2]
+_ldc_dir = os.path.join(os.path.dirname(__file__), "data")
+_table15 = pd.read_csv(os.path.join(_ldc_dir, "claret_2017_table15.csv.gz"))
+_table25 = pd.read_csv(os.path.join(_ldc_dir, "claret_2017_table25.csv.gz"))
+_table15 = _table15[_table15["xi"] == 2]
+_table25 = _table25[_table25["xi"] == 2]
 
 
 def get_interpolator(cool):
@@ -18,7 +18,7 @@ def get_interpolator(cool):
     Tables downloaded from Vizier
     http://vizier.cds.unistra.fr/viz-bin/VizieR?-source=J%2FA%2BA%2F600%2FA30
     """
-    table = table15 if cool else table25
+    table = _table15 if cool else _table25
     points = table[["teff", "logg", "feh"]].values
     values = table[["u1", "u2"]].values
     interp_u1 = NearestNDInterpolator(points, values.T[0], rescale=True)
