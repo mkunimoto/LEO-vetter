@@ -136,7 +136,7 @@ class TCELightCurve:
         Fmax = np.nanmax(-self.dep_series)
         self.metrics["SHP"] = Fmax / (Fmax - Fmin)
 
-    def run_all_tests(
+    def compute_all_metrics(
         self, star, verbose=True, frac=0.7, chases=0.01, rubble=0.75, A=0.3
     ):
         if verbose:
