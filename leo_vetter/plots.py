@@ -10,14 +10,11 @@ from scipy.stats import binned_statistic
 from leo_vetter.utils import MAD
 from leo_vetter.models import TransitModel, TrapezoidModel
 
-fs = 7
-ms = 5
-ts = 8
-label_colour = "C0"
-data_colour = "0.7"
-bin_colour = "k"
-odd_colour = "C1"
-even_colour = "C2"
+_label_colour = "C0"
+_data_colour = "0.7"
+_bin_colour = "k"
+_odd_colour = "C1"
+_even_colour = "C2"
 
 
 def binned_data(time, flux, nbins):
@@ -46,7 +43,7 @@ def expanded_phase(phase, flux, deps):
     )
 
 
-def modshift_box(label, ax, x, y, dy, phs, qtran, xtext=0.5, ytext=0.9):
+def modshift_box(label, ax, x, y, dy, phs, qtran, xtext=0.5, ytext=0.9, fs=7):
     cent = phs - 1 if phs > 0.75 else phs
     mask = (x > cent - qtran * 1.5) & (x < cent + qtran * 1.5)
     ax.errorbar(x[mask], y[mask], yerr=dy[mask], fmt="o", color="b", ms=3, capsize=2)
@@ -59,9 +56,9 @@ def modshift_box(label, ax, x, y, dy, phs, qtran, xtext=0.5, ytext=0.9):
         horizontalalignment="center",
         verticalalignment="center",
         transform=ax.transAxes,
-        fontsize=fs + 2,
+        fontsize=fs,
     )
-    ax.tick_params(axis="both", which="both", labelsize=fs + 2)
+    ax.tick_params(axis="both", which="both", labelsize=fs)
 
 
 def modshift_oddeven(label, ax, phase, flux, deps, phs, qtran, xtext=0.5, ytext=0.9):
@@ -74,16 +71,15 @@ def plot_modshift(tlc, save_fig=False, save_file=None):
     phase, flux, deps = expanded_phase(tlc.phase, tlc.flux, tlc.dep_series)
     bin_cent, bin_mean, bin_err = binned_data(phase, flux, int(10 * 1.5 / tlc.qtran))
     # Set up plot
-    fig = plt.figure(figsize=(7, 10))
+    fig = plt.figure(figsize=(6, 8))
+    fs = 7
     gs = gridspec.GridSpec(nrows=4, ncols=3, hspace=0.3, wspace=0.3)
     # Phase diagram
     axPhase = fig.add_subplot(gs[0, :])
-    axPhase.set_title(
-        f"TIC-{tlc.tic}.{tlc.planetno}: Modshift results", fontsize=fs + 2
-    )
+    axPhase.set_title(f"TIC-{tlc.tic}.{tlc.planetno}: Modshift results", fontsize=fs)
     axPhase.plot(phase, flux, "r.", ms=1)
     axPhase.plot(bin_cent, bin_mean, "b.", ms=2)
-    axPhase.set_xlabel("Phase", fontsize=fs + 2)
+    axPhase.set_xlabel("Phase", fontsize=fs)
     # Depth time series
     axDeps = fig.add_subplot(gs[1, :])
     axDeps.plot(phase, -deps, "k", ms=1)
@@ -91,17 +87,17 @@ def plot_modshift(tlc, save_fig=False, save_file=None):
     axDeps.axhline(y=3 * tlc.err * 1e6, color="b")
     axDeps.axhline(y=-3 * tlc.err * 1e6, color="b")
     for ax in [axPhase, axDeps]:
-        ax.set_ylabel("Flux (ppm)", fontsize=fs + 2)
+        ax.set_ylabel("Flux (ppm)", fontsize=fs)
         ax.axvspan(0.75, 1.25, alpha=0.5, color="grey")
         ax.set_xlim([-0.25, 1.25])
-        ax.tick_params(axis="both", which="both", labelsize=fs + 2)
+        ax.tick_params(axis="both", which="both", labelsize=fs)
     # Modshift results
     gs_sub = gridspec.GridSpecFromSubplotSpec(
         nrows=2, ncols=3, subplot_spec=gs[2:, :], wspace=0.5
     )
     # Primary event
     axPri = fig.add_subplot(gs_sub[0, 0])
-    axPri.set_ylabel("Flux (ppm)", fontsize=fs + 2)
+    axPri.set_ylabel("Flux (ppm)", fontsize=fs)
     modshift_box(
         "Primary", axPri, bin_cent, bin_mean, bin_err, tlc.metrics["phs_pri"], tlc.qtran
     )
@@ -110,8 +106,8 @@ def plot_modshift(tlc, save_fig=False, save_file=None):
         phs = tlc.metrics["phs_sec"]
         axSec = fig.add_subplot(gs_sub[1, 0])
         modshift_box("Secondary", axSec, bin_cent, bin_mean, bin_err, phs, tlc.qtran)
-        axSec.set_xlabel("Phase", fontsize=fs + 2)
-        axSec.set_ylabel("Flux (ppm)", fontsize=fs + 2)
+        axSec.set_xlabel("Phase", fontsize=fs)
+        axSec.set_ylabel("Flux (ppm)", fontsize=fs)
         phs = phs - 1 if phs > 0.75 else phs
         axDeps.axvline(x=phs, ymax=0.03, marker="^", color="k")
     # Tertiary events
@@ -119,7 +115,7 @@ def plot_modshift(tlc, save_fig=False, save_file=None):
         phs = tlc.metrics["phs_ter"]
         axTer = fig.add_subplot(gs_sub[1, 1])
         modshift_box("Tertiary", axTer, bin_cent, bin_mean, bin_err, phs, tlc.qtran)
-        axTer.set_xlabel("Phase", fontsize=fs + 2)
+        axTer.set_xlabel("Phase", fontsize=fs)
         phs = phs - 1 if phs > 0.75 else phs
         axDeps.axvline(x=phs, ymax=0.03, marker="^", color="k")
     # Positive events
@@ -129,7 +125,7 @@ def plot_modshift(tlc, save_fig=False, save_file=None):
         modshift_box(
             "Positive", axPos, bin_cent, bin_mean, bin_err, phs, tlc.qtran, 0.5, 0.1
         )
-        axPos.set_xlabel("Phase", fontsize=fs + 2)
+        axPos.set_xlabel("Phase", fontsize=fs)
         phs = phs - 1 if phs > 0.75 else phs
         axDeps.axvline(x=phs, ymin=0.97, marker="v", color="k")
     # Odd and even events
@@ -178,8 +174,8 @@ def plot_raw_det(gs, tlc, gap=20):
     axDet = brokenaxes(
         xlims=bnds, subplot_spec=rawdet_gs[1, :], wspace=0.05, despine=False, d=0
     )
-    axRaw.plot(tlc.time, tlc.raw, "k.", ms=ms)
-    axDet.plot(tlc.time, tlc.flux, "k.", ms=ms)
+    axRaw.plot(tlc.time, tlc.raw, "k.", ms=5)
+    axDet.plot(tlc.time, tlc.flux, "k.", ms=5)
     for i in range(len(start) - 1):
         axRaw.axvline(x=start[i + 1], ls="--", color="k")
         axDet.axvline(x=start[i + 1], ls="--", color="k")
@@ -188,29 +184,29 @@ def plot_raw_det(gs, tlc, gap=20):
     axRaw.tick_params(
         axis="x", which="both", bottom=False, top=False, labelbottom=False
     )
-    axRaw.tick_params(axis="y", which="both", labelsize=fs)
-    axDet.tick_params(axis="both", which="both", labelsize=fs)
-    axRaw.set_title(f"TIC-{tlc.tic}.{tlc.planetno} - Summary", fontsize=fs + 2)
-    axDet.set_xlabel("BJD - 2457000", fontsize=fs)
+    axRaw.tick_params(axis="y", which="both", labelsize=7)
+    axDet.tick_params(axis="both", which="both", labelsize=7)
+    axRaw.set_title(f"TIC-{tlc.tic}.{tlc.planetno} - Summary", fontsize=9)
+    axDet.set_xlabel("BJD - 2457000", fontsize=7)
     # Mark all transits
     mid_transit = tlc.epo + np.unique(tlc.epochs) * tlc.per
     for epoch in np.unique(tlc.epochs):
         mid_transit = tlc.epo + epoch * tlc.per
         if epoch % 2 == 0:
-            colour = odd_colour
+            colour = _odd_colour
         else:
-            colour = even_colour
+            colour = _even_colour
         if np.any((mid_transit > start) & (mid_transit < end)):
             axRaw.axvline(x=mid_transit, ymax=0.1, color=colour)
             axDet.axvline(x=mid_transit, ymax=0.1, color=colour)
-    axRaw.set_ylabel("Relative flux", fontsize=fs)
-    axDet.set_ylabel("Relative flux", fontsize=fs)
+    axRaw.set_ylabel("Relative flux", fontsize=7)
+    axDet.set_ylabel("Relative flux", fontsize=7)
     axRaw.big_ax.text(
         0.005,
         0.95,
         "Raw",
-        fontsize=fs + 1,
-        color=label_colour,
+        fontsize=8,
+        color=_label_colour,
         path_effects=[pe.withStroke(linewidth=4, foreground="w")],
         horizontalalignment="left",
         verticalalignment="top",
@@ -220,8 +216,8 @@ def plot_raw_det(gs, tlc, gap=20):
         0.005,
         0.95,
         "Detrended",
-        fontsize=fs + 1,
-        color=label_colour,
+        fontsize=8,
+        color=_label_colour,
         path_effects=[pe.withStroke(linewidth=4, foreground="w")],
         horizontalalignment="left",
         verticalalignment="top",
@@ -240,23 +236,23 @@ def plot_full_phase(ax, time, flux, per, epo, dur):
     phase, time, flux = sort_lightcurve(time, flux, per, epo)
     phase[phase < -0.25] += 1
     bin_cent, bin_mean, bin_err = binned_data(phase, flux, int(10 * per / dur))
-    ax.plot(phase, flux, ".", color=data_colour)
-    ax.plot(bin_cent, bin_mean, ".", color=bin_colour)
+    ax.plot(phase, flux, ".", color=_data_colour)
+    ax.plot(bin_cent, bin_mean, ".", color=_bin_colour)
     ax.set_xlim([-0.25, 0.75])
     ax.text(
         0.01,
         0.05,
         "Phase diagram",
-        fontsize=fs + 1,
-        color=label_colour,
+        fontsize=8,
+        color=_label_colour,
         path_effects=[pe.withStroke(linewidth=4, foreground="w")],
         horizontalalignment="left",
         verticalalignment="bottom",
         transform=ax.transAxes,
     )
-    ax.set_xlabel("Phase", fontsize=fs)
-    ax.set_ylabel("Relative flux\n", fontsize=fs)
-    ax.tick_params(axis="both", which="both", labelsize=fs)
+    ax.set_xlabel("Phase", fontsize=7)
+    ax.set_ylabel("Relative flux\n", fontsize=7)
+    ax.tick_params(axis="both", which="both", labelsize=7)
 
 
 def plot_close_phase(ax, time, flux, per, epo, dur):
@@ -264,23 +260,23 @@ def plot_close_phase(ax, time, flux, per, epo, dur):
     phase, time, flux = sort_lightcurve(time, flux, per, epo)
     near_tran = abs(phase) < 1.5 * qtran
     bin_cent, bin_mean, bin_err = binned_data(phase[near_tran], flux[near_tran], 30)
-    ax.plot(phase[near_tran] * per * 24, flux[near_tran], ".", color=data_colour)
-    ax.plot(bin_cent * per * 24, bin_mean, ".", color=bin_colour)
+    ax.plot(phase[near_tran] * per * 24, flux[near_tran], ".", color=_data_colour)
+    ax.plot(bin_cent * per * 24, bin_mean, ".", color=_bin_colour)
     ax.set_xlim([-1.5 * dur * 24, 1.5 * dur * 24])
     ax.text(
         0.02,
         0.05,
         "Primary",
-        fontsize=fs + 1,
-        color=label_colour,
+        fontsize=8,
+        color=_label_colour,
         path_effects=[pe.withStroke(linewidth=4, foreground="w")],
         horizontalalignment="left",
         verticalalignment="bottom",
         transform=ax.transAxes,
     )
-    ax.set_xlabel("Hours from midtransit", fontsize=fs)
-    ax.set_ylabel("Relative flux\n", fontsize=fs)
-    ax.tick_params(axis="both", which="both", labelsize=fs)
+    ax.set_xlabel("Hours from midtransit", fontsize=7)
+    ax.set_ylabel("Relative flux\n", fontsize=7)
+    ax.tick_params(axis="both", which="both", labelsize=7)
 
 
 def plot_odd_even(axOdd, axEven, time, flux, per, epo, dur, sig):
@@ -295,22 +291,22 @@ def plot_odd_even(axOdd, axEven, time, flux, per, epo, dur, sig):
     phase[phase > 0.5] -= 1
     if np.any(odd_tran):
         odd_cent, odd_mean, odd_err = binned_data(phase[odd_tran], flux[odd_tran], 30)
-        axOdd.plot(phase[odd_tran] * per * 24, flux[odd_tran], ".", color=data_colour)
-        axOdd.plot(odd_cent * per * 24, odd_mean, ".", color=bin_colour)
+        axOdd.plot(phase[odd_tran] * per * 24, flux[odd_tran], ".", color=_data_colour)
+        axOdd.plot(odd_cent * per * 24, odd_mean, ".", color=_bin_colour)
     if np.any(even_tran):
         even_cent, even_mean, even_err = binned_data(
             phase[even_tran], flux[even_tran], 30
         )
         axEven.plot(
-            phase[even_tran] * per * 24, flux[even_tran], ".", color=data_colour
+            phase[even_tran] * per * 24, flux[even_tran], ".", color=_data_colour
         )
-        axEven.plot(even_cent * per * 24, even_mean, ".", color=bin_colour)
+        axEven.plot(even_cent * per * 24, even_mean, ".", color=_bin_colour)
     axEven.text(
         0.96,
         0.05,
         f"({sig:.1f}$\sigma$)",
-        fontsize=fs + 1,
-        color=label_colour,
+        fontsize=8,
+        color=_label_colour,
         path_effects=[pe.withStroke(linewidth=4, foreground="w")],
         horizontalalignment="right",
         verticalalignment="bottom",
@@ -318,19 +314,19 @@ def plot_odd_even(axOdd, axEven, time, flux, per, epo, dur, sig):
     )
     for ax, label in zip([axOdd, axEven], ["Odd", "Even"]):
         ax.set_xlim([-1.5 * dur * 24, 1.5 * dur * 24])
-        ax.set_xlabel("Hours from midtransit", fontsize=fs)
+        ax.set_xlabel("Hours from midtransit", fontsize=7)
         ax.text(
             0.04,
             0.05,
             label,
-            fontsize=fs + 1,
-            color=label_colour,
+            fontsize=8,
+            color=_label_colour,
             path_effects=[pe.withStroke(linewidth=4, foreground="w")],
             horizontalalignment="left",
             verticalalignment="bottom",
             transform=ax.transAxes,
         )
-        ax.tick_params(axis="both", which="both", labelsize=fs)
+        ax.tick_params(axis="both", which="both", labelsize=7)
         ax.set_yticks([])
 
 
@@ -343,15 +339,15 @@ def plot_secondary(ax, time, flux, per, epo, dur, phs, dep, sig):
     near_tran = abs(phase) < 1.5 * qtran
     if np.any(near_tran):
         bin_cent, bin_mean, bin_err = binned_data(phase[near_tran], flux[near_tran], 30)
-        ax.plot(phase[near_tran] * per * 24, flux[near_tran], ".", color=data_colour)
-        ax.plot(bin_cent * per * 24, bin_mean, ".", color=bin_colour)
+        ax.plot(phase[near_tran] * per * 24, flux[near_tran], ".", color=_data_colour)
+        ax.plot(bin_cent * per * 24, bin_mean, ".", color=_bin_colour)
     ax.set_xlim([-1.5 * dur * 24, 1.5 * dur * 24])
     ax.text(
         0.02,
         0.05,
         "Secondary",
-        fontsize=fs + 1,
-        color=label_colour,
+        fontsize=8,
+        color=_label_colour,
         path_effects=[pe.withStroke(linewidth=4, foreground="w")],
         horizontalalignment="left",
         verticalalignment="bottom",
@@ -361,16 +357,16 @@ def plot_secondary(ax, time, flux, per, epo, dur, phs, dep, sig):
         0.98,
         0.05,
         f"{int(dep)} ppm ({sig:.1f}$\sigma$)",
-        fontsize=fs + 1,
-        color=label_colour,
+        fontsize=8,
+        color=_label_colour,
         path_effects=[pe.withStroke(linewidth=4, foreground="w")],
         horizontalalignment="right",
         verticalalignment="bottom",
         transform=ax.transAxes,
     )
-    ax.set_xlabel(f"Hours from secondary (phase {phs:.2f})", fontsize=fs)
-    ax.set_ylabel("Relative flux\n", fontsize=fs)
-    ax.tick_params(axis="both", which="both", labelsize=fs)
+    ax.set_xlabel(f"Hours from secondary (phase {phs:.2f})", fontsize=7)
+    ax.set_ylabel("Relative flux\n", fontsize=7)
+    ax.tick_params(axis="both", which="both", labelsize=7)
 
 
 def plot_half_phase(ax, time, flux, per, epo, dur):
@@ -381,22 +377,22 @@ def plot_half_phase(ax, time, flux, per, epo, dur):
     near_tran = abs(phase) < 1.5 * qtran
     if np.any(near_tran):
         bin_cent, bin_mean, bin_err = binned_data(phase[near_tran], flux[near_tran], 30)
-        ax.plot(phase[near_tran] * per * 24, flux[near_tran], ".", color=data_colour)
-        ax.plot(bin_cent * per * 24, bin_mean, ".", color=bin_colour)
+        ax.plot(phase[near_tran] * per * 24, flux[near_tran], ".", color=_data_colour)
+        ax.plot(bin_cent * per * 24, bin_mean, ".", color=_bin_colour)
     ax.set_xlim([-1.5 * dur * 24, 1.5 * dur * 24])
     ax.text(
         0.02,
         0.05,
         "Half phase",
-        fontsize=fs + 1,
-        color=label_colour,
+        fontsize=8,
+        color=_label_colour,
         path_effects=[pe.withStroke(linewidth=4, foreground="w")],
         horizontalalignment="left",
         verticalalignment="bottom",
         transform=ax.transAxes,
     )
-    ax.set_xlabel("Hours from secondary (phase 0.5)", fontsize=fs)
-    ax.tick_params(axis="both", which="both", labelsize=fs)
+    ax.set_xlabel("Hours from secondary (phase 0.5)", fontsize=7)
+    ax.tick_params(axis="both", which="both", labelsize=7)
     ax.set_yticks([])
 
 
@@ -413,10 +409,10 @@ def plot_individual_transits(ax, time, flux, per, epo, dur):
     # model_phase, model_flux = phase_diagram(tlc.mtime, tlc.model, tlc.epo, tlc.per, 0.5)
     for i in range(len(N_transit)):
         idx = np.abs(time - midpts[i]) < 2 * dur
-        ax.plot(phase[idx] * per * 24, flux[idx] - i * deltay, ".k-", ms=ms, lw=1)
+        ax.plot(phase[idx] * per * 24, flux[idx] - i * deltay, ".k-", ms=5, lw=1)
         # iax.plot(model_phase*24, model_flux - i*deltay,"r")
-    ax.tick_params(axis="both", which="both", labelsize=fs)
-    ax.set_xlabel("Hours from midtransit", fontsize=fs)
+    ax.tick_params(axis="both", which="both", labelsize=7)
+    ax.set_xlabel("Hours from midtransit", fontsize=7)
     ax.set_xlim([-2 * dur * 24, 2 * dur * 24])
     ax.set_yticks([])
 
@@ -454,9 +450,9 @@ def plot_text(ax, tlc, star, per, epo, dur, dep, spacing=0.043):
             "Planet properties:",
             "Stellar properties:",
         ]:
-            ax.annotate(prop, [0, line], fontsize=ts, fontweight="bold")
+            ax.annotate(prop, [0, line], fontsize=8, fontweight="bold")
         else:
-            ax.annotate(prop, [0, line], fontsize=ts)
+            ax.annotate(prop, [0, line], fontsize=8)
         line -= spacing
     ax.axis("off")
 
@@ -556,9 +552,9 @@ def plot_summary(tlc, star, save_fig=False, save_file=None):
         axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, tlc.metrics["trap_sig_oe"]
     )
     if plot_model:
-        axOdd.plot((mtime - epo) * 24, odd_model, color=odd_colour)
+        axOdd.plot((mtime - epo) * 24, odd_model, color=_odd_colour)
     if plot_model:
-        axEven.plot((mtime - epo) * 24, even_model, color=even_colour)
+        axEven.plot((mtime - epo) * 24, even_model, color=_even_colour)
     # Plot secondary
     phs = tlc.metrics["phs_sec"]
     if ~np.isnan(phs):
@@ -596,7 +592,7 @@ def plot_summary(tlc, star, save_fig=False, save_file=None):
 
 
 def plot_summary_with_diff(
-    tlc, star, tdi=None, images=None, catalog=None, save_fig=False, save_file=None
+    tlc, star, tdi=None, pixel_data=None, save_fig=False, save_file=None
 ):
     # Set up plotting
     fig = plt.figure(figsize=(12.5, 7))
@@ -653,9 +649,9 @@ def plot_summary_with_diff(
         axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, tlc.metrics["trap_sig_oe"]
     )
     if plot_model:
-        axOdd.plot((mtime - epo) * 24, odd_model, color=odd_colour)
+        axOdd.plot((mtime - epo) * 24, odd_model, color=_odd_colour)
     if plot_model:
-        axEven.plot((mtime - epo) * 24, even_model, color=even_colour)
+        axEven.plot((mtime - epo) * 24, even_model, color=_even_colour)
     # Plot secondary
     phs = tlc.metrics["phs_sec"]
     if ~np.isnan(phs):
@@ -687,13 +683,15 @@ def plot_summary_with_diff(
     for ax in [axPhase, axClose, axOdd, axEven]:
         ax.set_ylim([low - 4 * sigma, 1 + 4 * sigma])
     # Plot difference and direct images
-    if (tdi is not None) and (images is not None) and (catalog is not None):
+    if (tdi is not None) and (pixel_data is not None):
+        images = pixel_data[0]
+        catalog = pixel_data[1]
         tdi.draw_pix_catalog(
             images["diffSNRImage"],
             catalog,
             catalog["extent"],
             ax=axSNR1,
-            fs=fs,
+            fs=7,
             ss=10,
             filterStars=True,
             dMagThreshold=4,
@@ -703,7 +701,7 @@ def plot_summary_with_diff(
             catalog,
             catalog["extentClose"],
             ax=axSNR2,
-            fs=fs,
+            fs=7,
             ss=40,
             filterStars=True,
             dMagThreshold=4,
@@ -714,7 +712,7 @@ def plot_summary_with_diff(
             catalog,
             catalog["extent"],
             ax=axDiff1,
-            fs=fs,
+            fs=7,
             ss=10,
             filterStars=True,
             dMagThreshold=4,
@@ -724,7 +722,7 @@ def plot_summary_with_diff(
             catalog,
             catalog["extentClose"],
             ax=axDiff2,
-            fs=fs,
+            fs=7,
             ss=40,
             filterStars=True,
             dMagThreshold=4,
@@ -735,7 +733,7 @@ def plot_summary_with_diff(
             catalog,
             catalog["extent"],
             ax=axDir1,
-            fs=fs,
+            fs=7,
             ss=10,
             filterStars=True,
             dMagThreshold=4,
@@ -745,21 +743,98 @@ def plot_summary_with_diff(
             catalog,
             catalog["extentClose"],
             ax=axDir2,
-            fs=fs,
+            fs=7,
             ss=40,
             filterStars=True,
             dMagThreshold=4,
             close=True,
         )
-        axSNR1.set_title("Difference SNR", fontsize=fs)
-        axSNR2.set_title("Difference SNR (close)", fontsize=fs)
-        axDiff1.set_title("Difference image", fontsize=fs)
-        axDiff2.set_title("Difference image (close)", fontsize=fs)
-        axDir1.set_title("Direct image", fontsize=fs)
-        axDir2.set_title("Direct image (close)", fontsize=fs)
+        axSNR1.set_title("Difference SNR", fontsize=7)
+        axSNR2.set_title("Difference SNR (close)", fontsize=7)
+        axDiff1.set_title("Difference image", fontsize=7)
+        axDiff2.set_title("Difference image (close)", fontsize=7)
+        axDir1.set_title("Direct image", fontsize=7)
+        axDir2.set_title("Direct image (close)", fontsize=7)
     for ax in [axSNR1, axSNR2, axDiff1, axDiff2, axDir1, axDir2]:
         ax.axis("off")
     if save_fig:
         if save_file is None:
             save_file = f"{tlc.tic}.{tlc.planetno}.full.png"
         plt.savefig(save_file, bbox_inches="tight", dpi=150)
+
+
+def plot_diffimages(
+    tic, planetno, tdi, sectors, pixel_data, save_fig=False, save_file=None
+):
+    n_sectors = len(sectors)
+    fs = 10
+    # Set up plotting
+    fig, ax = plt.subplots(max(n_sectors, 2), 4, figsize=(4 * 2, max(n_sectors, 2) * 2))
+    fig.suptitle(f"TIC-{tic}.{planetno}: Difference images", fontsize=fs)
+    ax[0, 0].set_title("Diff Image\n", fontsize=fs)
+    ax[0, 1].set_title("Diff Image\n(Close-up)", fontsize=fs)
+    ax[0, 2].set_title("Direct Image\n", fontsize=fs)
+    ax[0, 3].set_title("Direct Image\n(Close-up)", fontsize=fs)
+    # Plot each differece image result on its own line
+    for i in range(n_sectors):
+        sector = sectors[i]
+        images = pixel_data[i][0]
+        catalog = pixel_data[i][1]
+        ax[i, 0].set_ylabel(f"Sector {sector}", fontsize=fs)
+        ax[i, 0].set_xticks([])
+        ax[i, 0].set_yticks([])
+        tdi.draw_pix_catalog(
+            images["diffImage"],
+            catalog,
+            catalog["extent"],
+            ax=ax[i, 0],
+            fs=fs,
+            ss=50,
+            filterStars=True,
+            dMagThreshold=4,
+            annotate=False,
+        )
+        tdi.draw_pix_catalog(
+            images["diffImage"],
+            catalog,
+            catalog["extentClose"],
+            ax=ax[i, 1],
+            fs=fs,
+            ss=200,
+            filterStars=True,
+            dMagThreshold=4,
+            annotate=False,
+            close=True,
+        )
+        tdi.draw_pix_catalog(
+            images["meanOutTransit"],
+            catalog,
+            catalog["extent"],
+            ax=ax[i, 2],
+            fs=fs,
+            ss=50,
+            filterStars=True,
+            dMagThreshold=4,
+            annotate=False,
+        )
+        tdi.draw_pix_catalog(
+            images["meanOutTransit"],
+            catalog,
+            catalog["extentClose"],
+            ax=ax[i, 3],
+            fs=fs,
+            ss=200,
+            filterStars=True,
+            dMagThreshold=4,
+            annotate=False,
+            close=True,
+        )
+        for n in [1, 2, 3]:
+            ax[i, n].axis("off")
+    if n_sectors < 2:
+        for n in [0, 1, 2, 3]:
+            ax[1, n].axis("off")
+    if save_fig:
+        if save_file is None:
+            save_file = f"{tic}.{planetno}.diffimages.png"
+        plt.savefig(save_file, bbox_inches="tight", dpi=100)
