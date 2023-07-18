@@ -685,11 +685,11 @@ def plot_summary_with_diff(
     # Plot difference and direct images
     if (tdi is not None) and (pixel_data is not None):
         images = pixel_data[0]
-        catalog = pixel_data[1]
+        catalogue = pixel_data[1]
         tdi.draw_pix_catalog(
             images["diffSNRImage"],
-            catalog,
-            catalog["extent"],
+            catalogue,
+            catalogue["extent"],
             ax=axSNR1,
             fs=7,
             ss=10,
@@ -698,8 +698,8 @@ def plot_summary_with_diff(
         )
         tdi.draw_pix_catalog(
             images["diffSNRImage"],
-            catalog,
-            catalog["extentClose"],
+            catalogue,
+            catalogue["extentClose"],
             ax=axSNR2,
             fs=7,
             ss=40,
@@ -709,8 +709,8 @@ def plot_summary_with_diff(
         )
         tdi.draw_pix_catalog(
             images["diffImage"],
-            catalog,
-            catalog["extent"],
+            catalogue,
+            catalogue["extent"],
             ax=axDiff1,
             fs=7,
             ss=10,
@@ -719,8 +719,8 @@ def plot_summary_with_diff(
         )
         tdi.draw_pix_catalog(
             images["diffImage"],
-            catalog,
-            catalog["extentClose"],
+            catalogue,
+            catalogue["extentClose"],
             ax=axDiff2,
             fs=7,
             ss=40,
@@ -730,8 +730,8 @@ def plot_summary_with_diff(
         )
         tdi.draw_pix_catalog(
             images["meanOutTransit"],
-            catalog,
-            catalog["extent"],
+            catalogue,
+            catalogue["extent"],
             ax=axDir1,
             fs=7,
             ss=10,
@@ -740,8 +740,8 @@ def plot_summary_with_diff(
         )
         tdi.draw_pix_catalog(
             images["meanOutTransit"],
-            catalog,
-            catalog["extentClose"],
+            catalogue,
+            catalogue["extentClose"],
             ax=axDir2,
             fs=7,
             ss=40,
@@ -779,14 +779,14 @@ def plot_diffimages(
     for i in range(n_sectors):
         sector = sectors[i]
         images = pixel_data[i][0]
-        catalog = pixel_data[i][1]
+        catalogue = pixel_data[i][1]
         ax[i, 0].set_ylabel(f"Sector {sector}", fontsize=fs)
         ax[i, 0].set_xticks([])
         ax[i, 0].set_yticks([])
         tdi.draw_pix_catalog(
             images["diffImage"],
-            catalog,
-            catalog["extent"],
+            catalogue,
+            catalogue["extent"],
             ax=ax[i, 0],
             fs=fs,
             ss=50,
@@ -796,8 +796,8 @@ def plot_diffimages(
         )
         tdi.draw_pix_catalog(
             images["diffImage"],
-            catalog,
-            catalog["extentClose"],
+            catalogue,
+            catalogue["extentClose"],
             ax=ax[i, 1],
             fs=fs,
             ss=200,
@@ -808,8 +808,8 @@ def plot_diffimages(
         )
         tdi.draw_pix_catalog(
             images["meanOutTransit"],
-            catalog,
-            catalog["extent"],
+            catalogue,
+            catalogue["extent"],
             ax=ax[i, 2],
             fs=fs,
             ss=50,
@@ -819,8 +819,8 @@ def plot_diffimages(
         )
         tdi.draw_pix_catalog(
             images["meanOutTransit"],
-            catalog,
-            catalog["extentClose"],
+            catalogue,
+            catalogue["extentClose"],
             ax=ax[i, 3],
             fs=fs,
             ss=200,

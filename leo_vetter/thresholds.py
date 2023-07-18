@@ -113,7 +113,7 @@ def offset(metrics, thresh=0.4, message="FP: off-target"):
     return metrics["offset"] > 0.4, message
 
 
-def apply_all_tests(metrics, case, verbose=False):
+def check_thresholds(metrics, case, verbose=False):
     if case == "FA":
         tests = [
             weak,

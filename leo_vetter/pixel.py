@@ -44,20 +44,20 @@ def planet_dict_from_metrics(metrics):
     return planet_dict(tic, planetno, per, epo, dur)
 
 
-def prf_fit(sector, cam, ccd, images, catalog):
+def prf_fit(sector, cam, ccd, images, catalogue):
     prf = tessprfmodel.SimpleTessPRF(
         shape=images["diffImage"].shape,
         sector=sector,
         camera=cam,
         ccd=ccd,
-        column=catalog["extent"][0],
-        row=catalog["extent"][2],
+        column=catalogue["extent"][0],
+        row=catalogue["extent"][2],
     )
     fit_vector, quality, _, _, _ = transitCentroids.tess_PRF_centroid(
-        prf, catalog["extent"], images["diffImage"], catalog
+        prf, catalogue["extent"], images["diffImage"], catalogue
     )
-    offset_col = np.abs(fit_vector[0] - catalog["ticColPix"][0])
-    offset_row = np.abs(fit_vector[1] - catalog["ticRowPix"][0])
+    offset_col = np.abs(fit_vector[0] - catalogue["ticColPix"][0])
+    offset_row = np.abs(fit_vector[1] - catalogue["ticRowPix"][0])
     offset = np.sqrt(offset_col**2 + offset_row**2)
     results = {}
     results["sector"] = sector
@@ -65,8 +65,8 @@ def prf_fit(sector, cam, ccd, images, catalog):
     results["ccd"] = ccd
     results["quality"] = quality
     results["offset"] = offset
-    results["tic_col"] = catalog["ticColPix"][0]
-    results["tic_row"] = catalog["ticRowPix"][0]
+    results["tic_col"] = catalogue["ticColPix"][0]
+    results["tic_row"] = catalogue["ticRowPix"][0]
     results["fit_col"] = fit_vector[0]
     results["fit_row"] = fit_vector[1]
     return results
@@ -109,13 +109,13 @@ def multisector_images(
             _ = os.system(f"rm {pixel_file}")
             continue
         images = pixel_data[0]
-        catalog = pixel_data[1]
+        catalogue = pixel_data[1]
         if "diffImage" not in images:
             print(f"TIC-{planet_ID}: difference image failed for sector {sector}")
         elif np.isnan(np.sum(images["diffImage"])):
             print(f"TIC-{planet_ID}: difference image failed for sector {sector}")
         else:
-            centroid = prf_fit(sector, star["cam"], star["ccd"], images, catalog)
+            centroid = prf_fit(sector, star["cam"], star["ccd"], images, catalogue)
             good_sectors.append(sector)
             good_pixel_data.append(pixel_data)
             good_centroids.append(centroid)
