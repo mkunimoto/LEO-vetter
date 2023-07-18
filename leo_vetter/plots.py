@@ -764,7 +764,7 @@ def plot_summary_with_diff(
 
 
 def plot_diffimages(
-    tic, planetno, tdi, sectors, pixel_data, save_fig=False, save_file=None
+    tic, planetno, tdi, sectors, pixel_data, annotate=False, save_fig=False, save_file=None
 ):
     n_sectors = len(sectors)
     fs = 10
@@ -792,7 +792,7 @@ def plot_diffimages(
             ss=50,
             filterStars=True,
             dMagThreshold=4,
-            annotate=False,
+            annotate=annotate,
         )
         tdi.draw_pix_catalog(
             images["diffImage"],
@@ -803,7 +803,7 @@ def plot_diffimages(
             ss=200,
             filterStars=True,
             dMagThreshold=4,
-            annotate=False,
+            annotate=annotate,
             close=True,
         )
         tdi.draw_pix_catalog(
@@ -815,7 +815,7 @@ def plot_diffimages(
             ss=50,
             filterStars=True,
             dMagThreshold=4,
-            annotate=False,
+            annotate=annotate,
         )
         tdi.draw_pix_catalog(
             images["meanOutTransit"],
@@ -826,7 +826,7 @@ def plot_diffimages(
             ss=200,
             filterStars=True,
             dMagThreshold=4,
-            annotate=False,
+            annotate=annotate,
             close=True,
         )
         for n in [1, 2, 3]:
