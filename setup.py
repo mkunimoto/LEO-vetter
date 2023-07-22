@@ -31,9 +31,6 @@ setup(
     license="GPLv3",
     packages=["leo_vetter"],
     package_dir={"leo_vetter": "leo_vetter"},
-    package_data={"leo_vetter": [
-        "data/claret_2017_table15.csv.gz",
-        "data/claret_2017_table25.csv.gz",
-    ]},
+    include_package_data=True,
     install_requires=requirements,
 )
