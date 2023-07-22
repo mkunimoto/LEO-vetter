@@ -1,0 +1,8 @@
+# Packaging
+build/
+*.egg-info/
+*.egg
+
+# Tutorials
+.ipynb_checkpoints
+*.ipynb_checkpoints
