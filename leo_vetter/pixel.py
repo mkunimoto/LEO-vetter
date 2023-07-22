@@ -73,7 +73,7 @@ def prf_fit(sector, cam, ccd, images, catalogue):
 
 
 def multisector_images(
-    star, sectors, planet_idx=0, save_dir=".", n_bad=0, max_sectors=5
+    star, sectors, planet_idx=0, save_dir=".", n_bad=0, max_sectors=np.inf
 ):
     tic = star["id"]
     planet = star["planetData"][planet_idx]
@@ -121,14 +121,14 @@ def multisector_images(
             good_centroids.append(centroid)
         if len(good_sectors) > max_sectors:
             print(
-                f"TIC-{tic}.{planetno}: reached max sector limit ({max_sectors}); stopping"
+                f"TIC-{planet_ID}: reached max sector limit ({max_sectors}); stopping"
             )
             break
     return tdi, good_sectors, good_pixel_data, good_centroids
 
 
 def pixel_vetting(
-    tlc, star, sectors, quality_flags=None, tdi_dir=".", n_bad=0, max_sectors=5
+    tlc, star, sectors, quality_flags=None, tdi_dir=".", n_bad=0, max_sectors=np.inf
 ):
     star_data = star_dict(
         star["tic"], star["ra"], star["dec"], quality_flags=quality_flags

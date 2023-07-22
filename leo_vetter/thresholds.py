@@ -86,7 +86,7 @@ def large(metrics, thresh=25, message="FP: radius too large"):
 
 
 def secondary(
-    metrics, thresh1=1, thresh2=0, thresh3=0, message="significant secondary"
+    metrics, thresh1=1, thresh2=0, thresh3=0, message="FP: significant secondary"
 ):
     MS1 = ((metrics["sig_sec"] / metrics["Fred"] - metrics["FA1"]) > thresh1) | (
         metrics["Fred"] > 2
@@ -153,4 +153,3 @@ def check_thresholds(metrics, case, verbose=False):
         if verbose and not mask:
             print(f"Passed all {case} tests")
     return mask
-
