@@ -30,7 +30,6 @@ setup(
     url="https://github.com/mkunimoto/LEO-vetter",
     license="GPLv3",
     packages=["leo_vetter"],
-    package_dir={"leo_vetter": "leo_vetter"},
     include_package_data=True,
     install_requires=requirements,
 )
