@@ -137,7 +137,7 @@ class TCELightCurve:
         self.metrics["SHP"] = Fmax / (Fmax - Fmin)
 
     def compute_flux_metrics(
-        self, star, verbose=True, frac=0.7, chases=0.01, rubble=0.75, A=0.3
+        self, star, verbose=True, cap_b=True, frac=0.7, chases=0.01, rubble=0.75, A=0.3
     ):
         if verbose:
             print("Estimating SES and MES time series...")
@@ -148,7 +148,7 @@ class TCELightCurve:
         fits.trapezoid(self)
         fits.half_trapezoid(self, "left")
         fits.half_trapezoid(self, "right")
-        fits.transit(self, star["u1"], star["u2"])
+        fits.transit(self, star["u1"], star["u2"], cap_b=cap_b)
         if verbose:
             print("Running SWEET test...")
         fits.sweet(self)
@@ -156,7 +156,7 @@ class TCELightCurve:
             print("Getting odd-even metrics...")
         oddeven.box(self)
         oddeven.trapezoid(self)
-        oddeven.transit(self)
+        oddeven.transit(self, cap_b=cap_b)
         if verbose:
             print("Checking individual transit events...")
         individual.transit_events(self, frac=frac)
