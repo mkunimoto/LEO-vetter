@@ -31,7 +31,7 @@ def bad_shape(metrics):
 def non_unique(metrics):
     # Checks the uniqueness of the event compared to noise/other events
     message="FA: events not unique in phased light curve"
-    MS1 = (metrics["sig_pri"] / metrics["Fred"] - metrics["FA1"]) < 0
+    MS1 = (metrics["sig_pri"] / metrics["Fred"] - metrics["FA1"]) < 3
     MS2 = (metrics["sig_pri"] - metrics["sig_ter"] - metrics["FA2"]) < 1
     MS3 = (metrics["sig_pri"] - metrics["sig_pos"] - metrics["FA2"]) < 0
     return MS1 | MS2 | MS3, message
