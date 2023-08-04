@@ -119,7 +119,7 @@ def multisector_images(
             good_sectors.append(sector)
             good_pixel_data.append(pixel_data)
             good_centroids.append(centroid)
-        if len(good_sectors) > max_sectors:
+        if len(good_sectors) == max_sectors:
             print(
                 f"TIC-{planet_ID}: reached max sector limit ({max_sectors}); stopping"
             )
