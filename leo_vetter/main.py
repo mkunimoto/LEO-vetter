@@ -106,19 +106,13 @@ class TCELightCurve:
             in_bin = in_tran & ~self.near_tran
             bin_flux[i] = weighted_mean(self.flux[in_bin], self.flux_err[in_bin])
             bin_flux_err[i] = weighted_err(self.flux[in_bin], self.flux_err[in_bin])
-        # Estimate white and red noise following Hartman & Bakos (2016)
         mask = ~np.isnan(bin_flux) & ~self.near_tran
-        std = weighted_std(self.flux[mask], self.flux_err[mask])
-        bin_std = weighted_std(bin_flux[mask], bin_flux_err[mask])
-        expected_bin_std = (
-            std
-            * np.sqrt(np.nanmean(bin_flux_err[mask] ** 2))
-            / np.sqrt(np.nanmean(self.flux_err[mask] ** 2))
-        )
-        self.sig_w = std
-        sig_r2 = bin_std**2 - expected_bin_std**2
-        self.sig_r = np.sqrt(sig_r2) if sig_r2 > 0 else 0
-        # Estimate signal-to-pink-noise following Pont et al. (2006)
+        # White noise is std of residual light curve
+        self.sig_w = weighted_std(self.flux[mask], self.flux_err[mask])
+        # Red noise is std of binned residual light curve
+        sig_r = weighted_std(bin_flux[mask], bin_flux_err[mask])
+        self.sig_r = sig_r if ~np.isnan(sig_r) else 0
+        # Combine white and red noise to get pink noise following Pont et al. (2006)
         self.err = np.sqrt(
             (self.sig_w**2 / self.n_in) + (self.sig_r**2 / self.N_transit)
         )
