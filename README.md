@@ -25,7 +25,7 @@ tdi, good_sectors, good_pixel_data, good_centroids = pixel_vetting(tlc, star, se
 
 # Check metrics against pass-fail thresholds
 FA = check_thresholds(tlc.metrics, "FA")
-FP = check_thresholds(metrics, "FP")
+FP = check_thresholds(tlc.metrics, "FP")
 ```
 
 Important note: The thresholds that determine whether a signal passes or fails are still undergoing optimization (and no single set of thresholds should work for all use-cases!), but the current thresholds should work pretty well for TESS-observed FGKM dwarf stars.
