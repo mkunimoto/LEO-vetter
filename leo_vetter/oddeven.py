@@ -120,7 +120,7 @@ def trapezoid(tlc):
     )
 
 
-def transit(tlc, cap_b=True):
+def transit(tlc, cap_b=False):
     try:
         if np.isnan(tlc.metrics["transit_aic"]):
             raise ValueError
