@@ -98,12 +98,12 @@ def odd_even(metrics):
     # Checks for differences between odd and even transits
     message = "FP: odd-even transit differences"
     dep_diff = metrics["trap_sig_dep"] > 3
-    epo_diff = metrics["trap_sig_epo"] > 3
+    epo_diff = metrics["trap_sig_epo"] > 10
     # The planet may have no odd or even transits
     wrong_period = (metrics["odd_dep"] < 3 * metrics["odd_dep_err"]) | (
         metrics["even_dep"] < 3 * metrics["even_dep_err"]
     )
-    return (dep_diff | epo_diff) & ~wrong_period, message
+    return (dep_diff & ~wrong_period) | epo_diff, message
 
 
 def vshaped(metrics):
