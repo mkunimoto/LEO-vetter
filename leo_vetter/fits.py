@@ -118,7 +118,7 @@ def half_trapezoid(tlc, side):
         tlc.metrics[f"trap_qtran_err_{side}"] = np.nan
 
 
-def transit(tlc, u1, u2, cap_b=False):
+def transit(tlc, u1, u2, cap_b=True):
     tlc.metrics["transit_u1"] = u1
     tlc.metrics["transit_u2"] = u2
     try:
