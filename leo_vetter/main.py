@@ -137,7 +137,7 @@ class TCELightCurve:
         self.metrics["SHP"] = Fmax / (Fmax - Fmin)
 
     def compute_flux_metrics(
-        self, star, verbose=True, cap_b=True, frac=0.7, chases=0.01, rubble=0.75, A=0.3
+        self, star, verbose=True, cap_b=False, frac=0.7, chases=0.01, rubble=0.75, A=0.3
     ):
         if verbose:
             print("Estimating SES and MES time series...")

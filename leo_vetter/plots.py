@@ -475,9 +475,11 @@ def transit_setup(tlc):
     model = tm.model(tm.params, mtime)
     odd_params = tm.params
     odd_params["RpRs"].value = tlc.metrics["transit_odd_RpRs"]
+    odd_params["epo"].value = tlc.metrics["transit_odd_epo"]
     odd_model = tm.model(odd_params, mtime)
     even_params = tm.params
     even_params["RpRs"].value = tlc.metrics["transit_even_RpRs"]
+    even_params["epo"].value = tlc.metrics["transit_even_epo"]
     even_model = tm.model(even_params, mtime)
     return per, epo, dur, mtime, model, odd_model, even_model
 
@@ -498,9 +500,11 @@ def trapezoid_setup(tlc):
     model = tm.model(tm.params, mtime)
     odd_params = tm.params
     odd_params["dep"].value = tlc.metrics["trap_odd_dep"]
+    odd_params["epo"].value = tlc.metrics["trap_odd_epo"]
     odd_model = tm.model(odd_params, mtime)
     even_params = tm.params
     even_params["dep"].value = tlc.metrics["trap_even_dep"]
+    even_params["epo"].value = tlc.metrics["trap_even_epo"]
     even_model = tm.model(even_params, mtime)
     return per, epo, dur, mtime, model, odd_model, even_model
 
@@ -549,7 +553,7 @@ def plot_summary(tlc, star, save_fig=False, save_file=None):
         axClose.plot((mtime - epo) * 24, model, "r")
     # Plot odd transits
     plot_odd_even(
-        axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, tlc.metrics["trap_sig_oe"]
+        axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, tlc.metrics["trap_sig_dep"]
     )
     if plot_model:
         axOdd.plot((mtime - epo) * 24, odd_model, color=_odd_colour)
@@ -646,7 +650,7 @@ def plot_summary_with_diff(
         axClose.plot((mtime - epo) * 24, model, "r")
     # Plot odd transits
     plot_odd_even(
-        axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, tlc.metrics["trap_sig_oe"]
+        axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, tlc.metrics["trap_sig_dep"]
     )
     if plot_model:
         axOdd.plot((mtime - epo) * 24, odd_model, color=_odd_colour)
@@ -764,7 +768,14 @@ def plot_summary_with_diff(
 
 
 def plot_diffimages(
-    tic, planetno, tdi, sectors, pixel_data, annotate=False, save_fig=False, save_file=None
+    tic,
+    planetno,
+    tdi,
+    sectors,
+    pixel_data,
+    annotate=False,
+    save_fig=False,
+    save_file=None,
 ):
     n_sectors = len(sectors)
     fs = 10
