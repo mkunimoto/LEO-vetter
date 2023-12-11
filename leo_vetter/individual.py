@@ -80,7 +80,7 @@ def transit_events(tlc, frac=0.7):
     tlc.metrics["DMM"] = np.nanmean(deps) / np.nanmedian(deps)
 
 
-def recompute_MES(tlc, chases=0.01, rubble=0.75):
+def recompute_MES(tlc, chases=0.01, rubble=0.75, redchi2=5):
     if "med_chases" not in tlc.metrics:
         print(
             f"{tlc.tic}.{tlc.planetno}: missing individual transit metrics not. Getting now..."
@@ -88,7 +88,7 @@ def recompute_MES(tlc, chases=0.01, rubble=0.75):
         transit_events(tlc)
     rubble_flag = tlc.rubble <= rubble
     zuma_flag = tlc.SES < 0
-    redchi2_flag = tlc.redchi2 > 5
+    redchi2_flag = tlc.redchi2 > redchi2
     bad_epochs = rubble_flag | zuma_flag | redchi2_flag
     if tlc.N_transit <= 5:
         chases_flag = tlc.chases < chases
