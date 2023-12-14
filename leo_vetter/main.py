@@ -142,6 +142,7 @@ class TCELightCurve:
         verbose=True,
         cap_b=True,
         frac=0.7,
+        gap=0.3,
         chases=0.01,
         rubble=0.75,
         redchi2=5,
@@ -167,7 +168,7 @@ class TCELightCurve:
         oddeven.transit(self, cap_b=cap_b)
         if verbose:
             print("Checking individual transit events...")
-        individual.transit_events(self, frac=frac)
+        individual.transit_events(self, frac=frac, gap=gap)
         individual.recompute_MES(self, chases=chases, rubble=rubble, redchi2=redchi2)
         if verbose:
             print("Running modshift...")
