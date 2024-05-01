@@ -45,3 +45,7 @@ git clone https://github.com/stevepur/transit-diffImage.git
 cd transit-diffImage
 pip install .
 ```
+
+### Citing LEO ###
+
+There is a paper upcoming to describe LEO, but for now please cite this codebase here if you found it useful: [https://ascl.net/2404.026](https://ascl.net/2404.026).
