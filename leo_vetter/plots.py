@@ -541,6 +541,14 @@ def plot_summary(tlc, star, save_fig=False, save_file=None):
         plot_model = False
     if np.isnan(dur):
         dur = tlc.metrics["dur"]
+    if ~np.isnan(tlc.metrics["trap_sig_dep"]):
+        sig_dep = tlc.metrics["trap_sig_dep"]
+    elif ~np.isnan(tlc.metrics["transit_sig_dep"]):
+        sig_dep = tlc.metrics["transit_sig_dep"]
+    elif ~np.isnan(tlc.metrics["sig_dep"]):
+        sig_dep = tlc.metrics["sig_dep"]
+    else:
+        sig_dep = np.nan
     # Plot raw and detrended light curves
     plot_raw_det(gs, tlc)
     # Plot full phase diagram
@@ -553,7 +561,7 @@ def plot_summary(tlc, star, save_fig=False, save_file=None):
         axClose.plot((mtime - epo) * 24, model, "r")
     # Plot odd transits
     plot_odd_even(
-        axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, tlc.metrics["trap_sig_dep"]
+        axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, sig_dep,
     )
     if plot_model:
         axOdd.plot((mtime - epo) * 24, odd_model, color=_odd_colour)
@@ -638,6 +646,14 @@ def plot_summary_with_diff(
         plot_model = False
     if np.isnan(dur):
         dur = tlc.metrics["dur"]
+    if ~np.isnan(tlc.metrics["trap_sig_dep"]):
+        sig_dep = tlc.metrics["trap_sig_dep"]
+    elif ~np.isnan(tlc.metrics["transit_sig_dep"]):
+        sig_dep = tlc.metrics["transit_sig_dep"]
+    elif ~np.isnan(tlc.metrics["sig_dep"]):
+        sig_dep = tlc.metrics["sig_dep"]
+    else:
+        sig_dep = np.nan
     # Plot raw and detrended light curves
     plot_raw_det(gs, tlc)
     # Plot full phase diagram
@@ -650,7 +666,7 @@ def plot_summary_with_diff(
         axClose.plot((mtime - epo) * 24, model, "r")
     # Plot odd transits
     plot_odd_even(
-        axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, tlc.metrics["trap_sig_dep"]
+        axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, sig_dep,
     )
     if plot_model:
         axOdd.plot((mtime - epo) * 24, odd_model, color=_odd_colour)

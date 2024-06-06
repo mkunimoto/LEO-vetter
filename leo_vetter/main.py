@@ -137,7 +137,16 @@ class TCELightCurve:
         self.metrics["SHP"] = Fmax / (Fmax - Fmin)
 
     def compute_flux_metrics(
-        self, star, verbose=True, cap_b=True, frac=0.7, chases=0.01, rubble=0.75, A=0.3
+        self,
+        star,
+        verbose=True,
+        cap_b=True,
+        frac=0.7,
+        gap=0.3,
+        chases=0.01,
+        rubble=0.75,
+        redchi2=5,
+        A=0.3,
     ):
         if verbose:
             print("Estimating SES and MES time series...")
@@ -159,8 +168,8 @@ class TCELightCurve:
         oddeven.transit(self, cap_b=cap_b)
         if verbose:
             print("Checking individual transit events...")
-        individual.transit_events(self, frac=frac)
-        individual.recompute_MES(self, chases=chases, rubble=rubble)
+        individual.transit_events(self, frac=frac, gap=gap)
+        individual.recompute_MES(self, chases=chases, rubble=rubble, redchi2=redchi2)
         if verbose:
             print("Running modshift...")
         modshift.uniqueness(self)

@@ -4,7 +4,7 @@ from leo_vetter.utils import phasefold, weighted_mean
 from leo_vetter.models import TransitModel
 
 
-def transit_events(tlc, frac=0.7):
+def transit_events(tlc, frac=0.7, gap=0.3):
     if "transit_aic" not in tlc.metrics:
         print(f"{tlc.tic}.{tlc.planetno}: warning: no transit model provided")
     if "sig_r" not in tlc.metrics:
@@ -18,8 +18,44 @@ def transit_events(tlc, frac=0.7):
     tlc.rubble = np.zeros(tlc.N_transit)
     tlc.chases = np.zeros(tlc.N_transit)
     tlc.redchi2 = np.zeros(tlc.N_transit)
-    # Search range for chases metric is between 1.5 durations and 0.1 times the period away
-    chases_tran = (abs(tlc.phase) > 1.5 * tlc.qtran) & (abs(tlc.phase) < 0.1)
+    # Search range for chases metric is between 1.0 durations and 0.1 times the period away
+    chases_tran = (abs(tlc.phase) > tlc.qtran) & (abs(tlc.phase) < 0.1)
+    # Count all transits in/near data gaps
+    diffs = np.diff(tlc.time)
+    starts = tlc.time[:-1][diffs > gap]
+    ends = tlc.time[1:][diffs > gap]
+    # Gaps within 0.5 transit durations of centre
+    gap_epochs_05 = np.unique(
+        tlc.epochs[tlc.in_tran][
+            np.isin(tlc.time[tlc.in_tran], starts)
+            | np.isin(tlc.time[tlc.in_tran], ends)
+        ]
+    )
+    tlc.metrics["N_gap_0.5"] = np.sum(np.isin(gap_epochs_05, tlc.tran_epochs))
+    # Gaps within 1 transit duration of centre
+    gap_epochs_10 = np.unique(
+        tlc.epochs[tlc.near_tran][
+            np.isin(tlc.time[tlc.near_tran], starts)
+            | np.isin(tlc.time[tlc.near_tran], ends)
+        ]
+    )
+    tlc.metrics["N_gap_1.0"] = np.sum(np.isin(gap_epochs_10, tlc.tran_epochs))
+    # Gaps within 1.5 transit durations of centre
+    mask = abs(tlc.phase) < 1.5 * tlc.qtran
+    gap_epochs_15 = np.unique(
+        tlc.epochs[mask][
+            np.isin(tlc.time[mask], starts) | np.isin(tlc.time[mask], ends)
+        ]
+    )
+    tlc.metrics["N_gap_1.5"] = np.sum(np.isin(gap_epochs_15, tlc.tran_epochs))
+    # Gaps within 2 transit durations of centre
+    gap_epochs_20 = np.unique(
+        tlc.epochs[tlc.fit_tran][
+            np.isin(tlc.time[tlc.fit_tran], starts)
+            | np.isin(tlc.time[tlc.fit_tran], ends)
+        ]
+    )
+    tlc.metrics["N_gap_2.0"] = np.sum(np.isin(gap_epochs_20, tlc.tran_epochs))
     # Get metrics for each transit event
     for i in range(tlc.N_transit):
         epoch = tlc.tran_epochs[i]
@@ -80,7 +116,7 @@ def transit_events(tlc, frac=0.7):
     tlc.metrics["DMM"] = np.nanmean(deps) / np.nanmedian(deps)
 
 
-def recompute_MES(tlc, chases=0.01, rubble=0.75):
+def recompute_MES(tlc, chases=0.01, rubble=0.75, redchi2=5):
     if "med_chases" not in tlc.metrics:
         print(
             f"{tlc.tic}.{tlc.planetno}: missing individual transit metrics not. Getting now..."
@@ -88,7 +124,7 @@ def recompute_MES(tlc, chases=0.01, rubble=0.75):
         transit_events(tlc)
     rubble_flag = tlc.rubble <= rubble
     zuma_flag = tlc.SES < 0
-    redchi2_flag = tlc.redchi2 > 5
+    redchi2_flag = tlc.redchi2 > redchi2
     bad_epochs = rubble_flag | zuma_flag | redchi2_flag
     if tlc.N_transit <= 5:
         chases_flag = tlc.chases < chases
