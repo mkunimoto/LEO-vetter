@@ -68,8 +68,22 @@ def modshift_oddeven(label, ax, phase, flux, deps, phs, qtran, xtext=0.5, ytext=
 
 
 def modshift_text(tlc, ax, fs=7):
-    labels = ["Pri", "Sec", "Ter", "Pos", "FA1", "FA2", "F_red", "Pri-Ter", "Pri-Pos",
-        "Sec-Ter", "Sec-Pos", "Odd-Even", "DMM", "Shape"]
+    labels = [
+        "Pri",
+        "Sec",
+        "Ter",
+        "Pos",
+        "FA1",
+        "FA2",
+        "F_red",
+        "Pri-Ter",
+        "Pri-Pos",
+        "Sec-Ter",
+        "Sec-Pos",
+        "Odd-Even",
+        "DMM",
+        "Shape",
+    ]
     vals = [
         tlc.metrics["sig_pri"],
         tlc.metrics["sig_sec"],
@@ -78,19 +92,22 @@ def modshift_text(tlc, ax, fs=7):
         tlc.metrics["FA1"],
         tlc.metrics["FA2"],
         tlc.metrics["Fred"],
-        tlc.metrics["sig_pri"]-tlc.metrics["sig_ter"],
-        tlc.metrics["sig_pri"]-tlc.metrics["sig_pos"],
-        tlc.metrics["sig_sec"]-tlc.metrics["sig_ter"],
-        tlc.metrics["sig_sec"]-tlc.metrics["sig_pos"],
+        tlc.metrics["sig_pri"] - tlc.metrics["sig_ter"],
+        tlc.metrics["sig_pri"] - tlc.metrics["sig_pos"],
+        tlc.metrics["sig_sec"] - tlc.metrics["sig_ter"],
+        tlc.metrics["sig_sec"] - tlc.metrics["sig_pos"],
         tlc.metrics["sig_dep"],
         tlc.metrics["DMM"],
         tlc.metrics["SHP"],
     ]
-    table = ax.table(cellText=[[f"{val:.2f}" for val in vals]], colLabels=labels, loc="center")
+    table = ax.table(
+        cellText=[[f"{val:.2f}" for val in vals]], colLabels=labels, loc="center"
+    )
     table.auto_set_font_size(False)
     table.set_fontsize(fs)
-    table.scale(1.2,1)
+    table.scale(1.2, 1)
     ax.axis("off")
+
 
 def plot_modshift(tlc, save_fig=False, save_file=None):
     phase, flux, deps = expanded_phase(tlc.phase, tlc.flux, tlc.dep_series)
@@ -102,8 +119,15 @@ def plot_modshift(tlc, save_fig=False, save_file=None):
     # Metric scores
     axText = fig.add_subplot(gs[0, :])
     axText.set_title(f"TIC-{tlc.tic}.{tlc.planetno}: Modshift results", fontsize=fs)
-    axText.text(0.5,0.8,f"P = {tlc.metrics['per']:.4f} days, E = {tlc.metrics['epo']:.4f} days", 
-        fontsize=fs,ha="center",va="center",transform=axText.transAxes)
+    axText.text(
+        0.5,
+        0.8,
+        f"P = {tlc.metrics['per']:.4f} days, E = {tlc.metrics['epo']:.4f} days",
+        fontsize=fs,
+        ha="center",
+        va="center",
+        transform=axText.transAxes,
+    )
     modshift_text(tlc, axText, fs)
     # Phase diagram
     axPhase = fig.add_subplot(gs[1, :])
@@ -591,7 +615,14 @@ def plot_summary(tlc, star, save_fig=False, save_file=None):
         axClose.plot((mtime - epo) * 24, model, "r")
     # Plot odd transits
     plot_odd_even(
-        axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, sig_dep,
+        axOdd,
+        axEven,
+        tlc.time,
+        tlc.flux,
+        per,
+        epo,
+        dur,
+        sig_dep,
     )
     if plot_model:
         axOdd.plot((mtime - epo) * 24, odd_model, color=_odd_colour)
@@ -696,7 +727,14 @@ def plot_summary_with_diff(
         axClose.plot((mtime - epo) * 24, model, "r")
     # Plot odd transits
     plot_odd_even(
-        axOdd, axEven, tlc.time, tlc.flux, per, epo, dur, sig_dep,
+        axOdd,
+        axEven,
+        tlc.time,
+        tlc.flux,
+        per,
+        epo,
+        dur,
+        sig_dep,
     )
     if plot_model:
         axOdd.plot((mtime - epo) * 24, odd_model, color=_odd_colour)

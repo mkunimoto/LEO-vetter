@@ -25,6 +25,7 @@ _default_thresholds = {
 
 #### False alarm checks ####
 
+
 def weak(metrics, thresholds):
     # Checks the Multiple Event Statistic (MES, i.e. signal-to-noise ratio)
     message = "FA: signal too weak"
@@ -34,8 +35,8 @@ def weak(metrics, thresholds):
 def invalid_transits(metrics, thresholds):
     # Checks the number of "good" transits left after removing all the "bad" transits
     message = "FA: not enough valid transits"
-    mes = (metrics["new_MES"] < thresholds["MES"])
-    ntr = (metrics["new_N_transit"] < thresholds["N_transit"])
+    mes = metrics["new_MES"] < thresholds["MES"]
+    ntr = metrics["new_N_transit"] < thresholds["N_transit"]
     return mes | ntr, message
 
 
@@ -60,7 +61,9 @@ def non_unique(metrics, thresholds):
 def chases(metrics, thresholds):
     # Checks the uniqueness of each individual event compared to the local light curve
     message = "FA: events not unique in local light curve"
-    return (metrics["N_transit"] <= 5) & (metrics["mean_chases"] < thresholds["chases"]), message
+    return (metrics["N_transit"] <= 5) & (
+        metrics["mean_chases"] < thresholds["chases"]
+    ), message
 
 
 def dmm(metrics, thresholds):
@@ -72,7 +75,7 @@ def dmm(metrics, thresholds):
 def single_event(metrics, thresholds):
     # Checks for single events dominating the MES
     message = "FA: dominated by single event"
-    return (metrics["max_SES"] / metrics["MES"] > thresholds["max_SES_to_MES"] ) & (
+    return (metrics["max_SES"] / metrics["MES"] > thresholds["max_SES_to_MES"]) & (
         metrics["N_transit"] <= 10
     ), message
 
@@ -84,7 +87,9 @@ def bad_fit(metrics, thresholds):
     chisqr = metrics["transit_chisqr"] > metrics["line_chisqr"]
     gen_metrics = (metrics["transit_aic"] - metrics["line_aic"]) > thresholds["AIC1"]
     sub_metrics = (metrics["transit_aic"] - metrics["line_aic"]) > thresholds["AIC2"]
-    aic = (gen_metrics & (metrics["N_transit"] <= 10)) | (sub_metrics & (metrics["N_transit"] > 10))
+    aic = (gen_metrics & (metrics["N_transit"] <= 10)) | (
+        sub_metrics & (metrics["N_transit"] > 10)
+    )
     return fit_failed | chisqr | aic, message
 
 
@@ -125,7 +130,9 @@ def chi(metrics, thresholds):
 def data_gapped(metrics, thresholds):
     # Checks the number of "good" transits left after removing all the "bad" transits
     message = "FA: too many transits near gaps"
-    return (metrics["N_gap_2.0"]/metrics["N_transit"] >= thresholds["frac_gap"]), message
+    return (
+        metrics["N_gap_2.0"] / metrics["N_transit"] >= thresholds["frac_gap"]
+    ), message
 
 
 #### Astrophysical false positive checks ####
@@ -134,18 +141,23 @@ def data_gapped(metrics, thresholds):
 def odd_even(metrics, thresholds):
     # Checks for differences between odd and even transits
     message = "FP: odd-even transit differences"
-    box_dep_sigma = (metrics["sig_dep"] > 3)
-    trap_dep_sigma = (metrics["trap_sig_dep"] > 3)
-    trap_epo_sigma = (metrics["trap_sig_epo"] > 10)
-    transit_dep_sigma = (metrics["transit_sig_dep"] > 3)
-    transit_epo_sigma = (metrics["transit_sig_epo"] > 10)
-    return ((box_dep_sigma & (trap_dep_sigma | transit_dep_sigma)) | (transit_epo_sigma | trap_epo_sigma)), message
+    box_dep_sigma = metrics["sig_dep"] > 3
+    trap_dep_sigma = metrics["trap_sig_dep"] > 3
+    trap_epo_sigma = metrics["trap_sig_epo"] > 10
+    transit_dep_sigma = metrics["transit_sig_dep"] > 3
+    transit_epo_sigma = metrics["transit_sig_epo"] > 10
+    return (
+        (box_dep_sigma & (trap_dep_sigma | transit_dep_sigma))
+        | (transit_epo_sigma | trap_epo_sigma)
+    ), message
 
 
 def vshaped(metrics, thresholds):
     message = "FP: V-shaped events"
     # Checks for both large and highly grazing objects
-    return (metrics["transit_b"] + metrics["transit_RpRs"]) > thresholds["V_shape"], message
+    return (metrics["transit_b"] + metrics["transit_RpRs"]) > thresholds[
+        "V_shape"
+    ], message
 
 
 def large(metrics, thresholds):
@@ -157,15 +169,15 @@ def large(metrics, thresholds):
 def secondary(metrics, thresholds):
     # Checks for the existence of a significant secondary eclipse
     message = "FP: significant secondary"
-    MS4 = ((metrics["sig_sec"] / metrics["Fred"] - metrics["FA1"]) > thresholds["MS4"]) | (
-        metrics["Fred"] > 1.8
-    )
-    MS5 = ((metrics["sig_sec"] - metrics["sig_ter"] - metrics["FA2"]) > thresholds["MS5"]) | np.isnan(
-        metrics["sig_ter"]
-    )
-    MS6 = ((metrics["sig_sec"] - metrics["sig_pos"] - metrics["FA2"]) > thresholds["MS6"]) | np.isnan(
-        metrics["sig_pos"]
-    )
+    MS4 = (
+        (metrics["sig_sec"] / metrics["Fred"] - metrics["FA1"]) > thresholds["MS4"]
+    ) | (metrics["Fred"] > 1.8)
+    MS5 = (
+        (metrics["sig_sec"] - metrics["sig_ter"] - metrics["FA2"]) > thresholds["MS5"]
+    ) | np.isnan(metrics["sig_ter"])
+    MS6 = (
+        (metrics["sig_sec"] - metrics["sig_pos"] - metrics["FA2"]) > thresholds["MS6"]
+    ) | np.isnan(metrics["sig_pos"])
     # The secondary may be consistent with a planet
     albedo = (
         (metrics["Rp"] < thresholds["size"])
@@ -183,6 +195,7 @@ def offset(metrics, thresholds):
 
 
 #### Check metrics against pass-fail thresholds ####
+
 
 def check_thresholds(metrics, case, verbose=False, thresholds=_default_thresholds):
     if case == "FA":
