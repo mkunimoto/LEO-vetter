@@ -56,15 +56,28 @@ def prf_fit(sector, cam, ccd, images, catalogue):
     fit_vector, quality, _, _, _ = transitCentroids.tess_PRF_centroid(
         prf, catalogue["extent"], images["diffImage"], catalogue
     )
+    # Find the offset in terms of pixels
     offset_col = np.abs(fit_vector[0] - catalogue["ticColPix"][0])
     offset_row = np.abs(fit_vector[1] - catalogue["ticRowPix"][0])
-    offset = np.sqrt(offset_col**2 + offset_row**2)
+    offset_pix = np.sqrt(offset_col**2 + offset_row**2)
+    # Find the offset in terms of arcsecs
+    ra_dec = tessDiffImage.pix_to_ra_dec(
+        sector, cam, ccd, fit_vector[0], fit_vector[1]
+    )
+    corrected_ra = catalogue['correctedRa'][0]
+    corrected_dec = catalogue['correctedDec'][0]
+    offset_ra = ra_dec[0] - corrected_ra
+    offset_dec = ra_dec[1] - corrected_dec
+    offset_arc = 3600*np.sqrt((offset_ra*np.cos(corrected_dec*np.pi/180))**2 +\
+        offset_dec**2)
+    # Save all results
     results = {}
     results["sector"] = sector
     results["cam"] = cam
     results["ccd"] = ccd
     results["quality"] = quality
-    results["offset"] = offset
+    results["offset_pix"] = offset_pix
+    results["offset_arc"] = offset_arc
     results["tic_col"] = catalogue["ticColPix"][0]
     results["tic_row"] = catalogue["ticRowPix"][0]
     results["fit_col"] = fit_vector[0]
@@ -138,13 +151,14 @@ def pixel_vetting(
     tdi, good_sectors, good_pixel_data, good_centroids = multisector_images(
         star_data, sectors, save_dir=tdi_dir, n_bad=n_bad, max_sectors=max_sectors
     )
-    # Average all offsets together to get one offset estimate
+    # offset_mean = mean offset weighted by quality
+    # offset_qual = offset with best quality
     if len(good_centroids) == 0:
-        offset = np.nan
+        tlc.metrics["offset_mean"] = np.nan
+        tlc.metrics["offset_qual"] = np.nan
     else:
-        offsets = []
-        for centroid in good_centroids:
-            offsets.append(centroid["offset"])
-        offset = np.nanmean(np.array(offsets))
-    tlc.metrics["offset"] = offset
+        offset_arc = np.array([centroid["offset_arc"] for centroid in good_centroids])
+        quality = np.array([centroid["quality"] for centroid in good_centroids])
+        tlc.metrics["offset_mean"] = np.nanmean(offset_arc * quality)/np.nansum(quality)
+        tlc.metrics["offset_qual"] = offset_arc[np.argmax(quality)]
     return tdi, good_sectors, good_pixel_data, good_centroids
