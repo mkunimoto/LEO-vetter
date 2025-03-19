@@ -29,11 +29,11 @@ def planet_dict(tic, planetno, per, epo, dur):
 def planet_dict_from_metrics(metrics):
     tic = int(metrics["tic"])
     planetno = int(metrics["planetno"])
-    if ~np.isnan(metrics["transit_aic"]):
+    if "transit_aic" in metrics and ~np.isnan(metrics["transit_aic"]):
         per = metrics["transit_per"]
         epo = metrics["transit_epo"]
         dur = metrics["transit_dur"]
-    elif ~np.isnan(metrics["trap_aic"]):
+    elif "trap_aic" in metrics and ~np.isnan(metrics["trap_aic"]):
         per = metrics["trap_per"]
         epo = metrics["trap_epo"]
         dur = metrics["trap_dur"]
