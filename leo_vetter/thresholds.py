@@ -3,11 +3,12 @@ import numpy as np
 _default_thresholds = {
     "MES": 6.2,
     "N_transit": 3,
-    "SHP": 0.5,
-    "MS1": 1,
-    "MS2": 1,
-    "MS3": 1,
+    "SHP": 0.6,
+    "MS1": 0.2,
+    "MS2": 0.8,
+    "MS3": 0.8,
     "chases": 0.78,
+    "DMM": 1.5,
     "max_SES_to_MES": 0.8,
     "AIC1": -60,
     "AIC2": -30,
@@ -69,7 +70,7 @@ def chases(metrics, thresholds):
 def dmm(metrics, thresholds):
     # Checks for consistency between the mean and median transit depths
     message = "FA: inconsistent transit depths"
-    return (metrics["DMM"] < 0.5) | (metrics["DMM"] > 1.5), message
+    return metrics["DMM"] > thresholds["DMM"], message
 
 
 def single_event(metrics, thresholds):
