@@ -158,7 +158,7 @@ def pixel_vetting(
     else:
         offset_arc = np.array([centroid["offset_arc"] for centroid in good_centroids])
         quality = np.array([centroid["quality"] for centroid in good_centroids])
-        tlc.metrics["offset_mean"] = np.nanmean(offset_arc * quality) / np.nansum(
+        tlc.metrics["offset_mean"] = np.nansum(offset_arc * quality) / np.nansum(
             quality
         )
         tlc.metrics["offset_qual"] = offset_arc[np.argmax(quality)]
