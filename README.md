@@ -1,4 +1,4 @@
-## LEO-vetter: for Lazy Exoplanet Operations ##
+## 🦁 LEO-vetter: for Lazy Exoplanet Operations ##
 
 LEO-vetter is a tool for automated vetting of transit signals found in light curve data. Inspired by the Kepler Robovetter, LEO computes vetting metrics and then checks those metrics against a series of pass-fail thresholds. If a signal passes all checks, it is considered a planet candidate (PC). If a signal fails at least one test, it may be either an astrophysical false positive (FP; e.g. eclipsing binary, nearby eclipsing signal) or false alarm (FA; e.g. systematic, stellar variability). LEO also produces vetting reports for quick manual inspection of the signal.
 
@@ -48,4 +48,4 @@ pip install .
 
 ### Citing LEO ###
 
-There is a paper upcoming to describe LEO, but for now please cite this codebase here if you found it useful: [https://ascl.net/2404.026](https://ascl.net/2404.026).
+There will be a full AJ paper out soon, but for now please cite our paper [on arxiv](https://arxiv.org/abs/2509.10619) 😊 
