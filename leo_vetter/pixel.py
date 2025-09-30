@@ -118,7 +118,7 @@ def multisector_images(
                 pixel_data = pickle.load(f)
         except EOFError:
             print(f"TIC-{planet_ID}: difference image failed for sector {sector}")
-            _ = os.system(f"rm {pixel_file}")
+            os.remove(pixel_file)
             continue
         images = pixel_data[0]
         catalogue = pixel_data[1]
