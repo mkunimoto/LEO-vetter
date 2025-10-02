@@ -85,7 +85,7 @@ def prf_fit(sector, cam, ccd, images, catalogue):
 
 
 def multisector_images(
-    star, sectors, planet_idx=0, save_dir=".", n_bad=0, max_sectors=np.inf
+    star, sectors, planet_idx=0, save_dir=".", n_bad=0, max_sectors=np.inf, **kwargs
 ):
     tic = star["id"]
     planet = star["planetData"][planet_idx]
@@ -100,7 +100,7 @@ def multisector_images(
         star["sector"] = sector
         star["cam"] = all_cams[all_sectors == sector][0]
         star["ccd"] = all_ccds[all_sectors == sector][0]
-        tdi = tessDiffImage.tessDiffImage(star, outputDir=save_dir)
+        tdi = tessDiffImage.tessDiffImage(star, outputDir=save_dir, **kwargs)
         pixel_file = os.path.join(
             save_dir, f"tic{tic}/imageData_{planet_ID}_sector{sector}.pickle"
         )
@@ -140,7 +140,7 @@ def multisector_images(
 
 
 def pixel_vetting(
-    tlc, star, sectors, quality_flags=None, tdi_dir=".", n_bad=0, max_sectors=np.inf
+    tlc, star, sectors, quality_flags=None, tdi_dir=".", n_bad=0, max_sectors=np.inf, **kwargs
 ):
     star_data = star_dict(
         star["tic"], star["ra"], star["dec"], quality_flags=quality_flags
@@ -148,7 +148,7 @@ def pixel_vetting(
     planet_data = planet_dict_from_metrics(tlc.metrics)
     star_data["planetData"] = [planet_data]
     tdi, good_sectors, good_pixel_data, good_centroids = multisector_images(
-        star_data, sectors, save_dir=tdi_dir, n_bad=n_bad, max_sectors=max_sectors
+        star_data, sectors, save_dir=tdi_dir, n_bad=n_bad, max_sectors=max_sectors, **kwargs
     )
     # offset_mean = mean offset weighted by quality
     # offset_qual = offset with best quality
