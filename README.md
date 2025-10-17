@@ -28,7 +28,7 @@ FA = check_thresholds(tlc.metrics, "FA")
 FP = check_thresholds(tlc.metrics, "FP")
 ```
 
-Important note: The thresholds that determine whether a signal passes or fails are still undergoing optimization (and no single set of thresholds should work for all use-cases!), but the current thresholds should work pretty well for TESS-observed FGKM dwarf stars.
+Important note: The thresholds that determine whether a signal passes or fails work pretty well for TESS-observed FGKM dwarf stars, but no single set of thresholds will work for all use-cases. You can try changing the thresholds (or even adding/removing tests) to optimize this tool for your own purposes (see Tutorial 4).
 
 ### Installation ###
 
