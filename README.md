@@ -48,4 +48,6 @@ pip install .
 
 ### Citing LEO ###
 
-There will be a full AJ paper out soon, but for now please cite our paper [on arxiv](https://arxiv.org/abs/2509.10619) 😊 
+Please site [our paper](https://ui.adsabs.harvard.edu/abs/2025AJ....170..280K/abstract) if you find LEO-Vetter useful 😊
+
+Kunimoto, M., Bryson, S., Jaffee, D., et al. (2025) The Astronomical Journal, 170, 280
