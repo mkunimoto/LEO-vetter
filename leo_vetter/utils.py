@@ -26,7 +26,6 @@ def weighted_err(y, dy):
 
 def weighted_std(y, dy):
     w = 1 / dy**2
-    N = len(w)
     mean = np.sum(w * y) / np.sum(w)
-    std = np.sqrt(np.sum(w * (y - mean) ** 2) / ((N - 1) * np.sum(w) / N))
+    std = np.sqrt(np.sum(w * (y - mean) **2) / np.sum(w))
     return std
