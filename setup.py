@@ -19,20 +19,42 @@ def get_version(rel_path):
         raise RuntimeError("Unable to find version string.")
 
 
-with open("requirements.txt", "rt") as f:
-    requirements = [line.strip() for line in f.readlines()]
+CLASSIFIERS = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+INSTALL_REQUIRES = [
+    "numpy",
+    "scipy",
+    "brokenaxes",
+    "batman-package",
+    "lmfit",
+]
 
 setup(
     name="leo_vetter",
     version=get_version("leo_vetter/__init__.py"),
     author="Michelle Kunimoto",
     author_email="michelle.kunimoto@gmail.com",
+    maintainer="Michelle Kunimoto",
+    maintainer_email="michelle.kunimoto@gmail.com",
     url="https://github.com/mkunimoto/LEO-Vetter",
     license="GPLv3",
+    license_files=["LICENSE.txt"],
+    description="LEO-Vetter: Automated Vetting for TESS Planet Candidates",
+    long_description=read("README.md"),
+    long_description_content_type="text/markdown",
     packages=["leo_vetter"],
     package_data={"leo_vetter": [
         "data/claret_2017_table15.csv.gz",
         "data/claret_2017_table25.csv.gz",
     ]},
-    install_requires=requirements,
+    install_requires=INSTALL_REQUIRES,
+    classifiers=CLASSIFIERS,
 )
+
