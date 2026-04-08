@@ -32,10 +32,10 @@ Important note: The thresholds that determine whether a signal passes or fails w
 
 ### Installation ###
 
+LEO-Vetter is pip-installable:
+
 ```
-git clone https://github.com/mkunimoto/LEO-vetter.git
-cd LEO-vetter
-pip install .
+pip install leo-vetter
 ```
 
 If you also want to run pixel-level vetting (recommended), you will need to install the `transit-diffImage` package available [here](https://github.com/stevepur/transit-diffImage):
