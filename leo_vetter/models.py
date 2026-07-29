@@ -31,8 +31,8 @@ class TrapezoidModel(Model):
     ):
         if params is None:
             params = Parameters()
-            params.add("per", value=per, min=0.9 * per, max=1.1 * per)
-            params.add("epo", value=epo, min=epo - 0.1 * per, max=epo + 0.1 * per)
+            params.add("per", value=per, min=0)
+            params.add("epo", value=epo)
             params.add("dep", value=dep, min=0, max=1)
             params.add("qtran", value=qtran, min=0, max=1)
             params.add("qin", value=qin, min=0, max=0.5)
@@ -67,19 +67,13 @@ class TransitModel(Model):
         u2=None,
         zpt=None,
         params=None,
-        cap_b=True,
     ):
         if params is None:
             params = Parameters()
-            params.add("per", value=per, min=0.9 * per, max=1.1 * per)
-            params.add("epo", value=epo, min=epo - 0.1 * per, max=epo + 0.1 * per)
-            if cap_b:
-                params.add("b", value=b, min=0, max=1)
-                params.add("RpRs", value=RpRs, min=0, max=1)
-            else:
-                params.add("b", value=b, min=0)
-                params.add("delta", value=b - RpRs, max=1)
-                params.add("RpRs", expr="b - delta")
+            params.add("per", value=per, min=0)
+            params.add("epo", value=epo)
+            params.add("b", value=b, min=0)
+            params.add("RpRs", value=RpRs, min=0)
             params.add("aRs", value=aRs, min=0)
             params.add("u1", value=u1, vary=False)
             params.add("u2", value=u2, vary=False)
@@ -106,10 +100,10 @@ class SineModel(Model):
     def __init__(self, per=None, amp=None, phs=None, zpt=None, params=None):
         if params is None:
             params = Parameters()
-            params.add("per", value=per, min=0.9 * per, max=1.1 * per)
+            params.add("per", value=per, min=0)
             params.add("amp", value=amp, min=0)
-            params.add("phs", value=phs, min=0, max=2 * np.pi)
-            params.add("zpt", value=zpt)
+            params.add("phs", value=phs)
+            params.add("zpt", value=zpt, min=0)
         self.params = params
 
     def model(self, params, t):
