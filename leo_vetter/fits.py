@@ -35,6 +35,10 @@ def trapezoid(tlc):
         best_chisqr = np.inf
         for qin in [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
             tm = TrapezoidModel(tlc.per, tlc.epo, tlc.dep, tlc.qtran, qin, tlc.zpt)
+            tm.params["per"].min = 0.9*tlc.per 
+            tm.params["per"].max = 1.1*tlc.per
+            tm.params["epo"].min = tlc.epo-0.1*tlc.per
+            tm.params["epo"].max = tlc.epo+0.1*tlc.per
             tm.params["qin"].vary = False
             fit = minimize(
                 tm.residual,
@@ -118,7 +122,7 @@ def half_trapezoid(tlc, side):
         tlc.metrics[f"trap_qtran_err_{side}"] = np.nan
 
 
-def transit(tlc, u1, u2, cap_b=True):
+def transit(tlc, u1, u2, cap_b=True, max_RpRs=1):
     tlc.metrics["transit_u1"] = u1
     tlc.metrics["transit_u2"] = u2
     try:
@@ -130,9 +134,19 @@ def transit(tlc, u1, u2, cap_b=True):
             sinterm = np.sin(tlc.dur * np.pi / tlc.per) ** 2
             aRs = np.sqrt(((1 + RpRs) ** 2 - b**2 * (1 - sinterm)) / sinterm)
             tm = TransitModel(
-                tlc.per, tlc.epo, RpRs, aRs, b, u1, u2, tlc.zpt, cap_b=cap_b
+                tlc.per, tlc.epo, RpRs, aRs, b, u1, u2, tlc.zpt
             )
+            tm.params["per"].min = 0.9*tlc.per
+            tm.params["per"].max = 1.1*tlc.per
+            tm.params["epo"].min = tlc.epo-0.1*tlc.per
+            tm.params["epo"].max = tlc.epo+0.1*tlc.per
             tm.params["b"].vary = False
+            if cap_b:
+                tm.params["b"].max = 1
+                tm.params["RpRs"].max = max_RpRs
+            else:
+                tm.params.add("delta", value=b-RpRs, max=1)
+                tm.params["RpRs"].set(expr="b-delta")
             fit = minimize(
                 tm.residual,
                 tm.params,
@@ -182,6 +196,8 @@ def sweet(tlc):
         phase = phasefold(tlc.time, per, tlc.epo) * per
         sm = SineModel(per, np.nanstd(tlc.flux), 3 * np.pi / 2.0, tlc.zpt)
         sm.params["per"].vary = False
+        sm.params["phs"].min = 0
+        sm.params["phs"].max = 2*np.pi
         try:
             fit = minimize(
                 sm.residual,

@@ -176,6 +176,7 @@ class TCELightCurve:
         star,
         verbose=True,
         cap_b=True,
+        max_RpRs=1,
         frac=0.7,
         gap=0.3,
         chases=0.01,
@@ -192,7 +193,7 @@ class TCELightCurve:
         fits.trapezoid(self)
         fits.half_trapezoid(self, "left")
         fits.half_trapezoid(self, "right")
-        fits.transit(self, star["u1"], star["u2"], cap_b=cap_b)
+        fits.transit(self, star["u1"], star["u2"], cap_b=cap_b, max_RpRs=max_RpRs)
         if verbose:
             print("Running SWEET test...")
         fits.sweet(self)
@@ -200,7 +201,7 @@ class TCELightCurve:
             print("Getting odd-even metrics...")
         oddeven.box(self)
         oddeven.trapezoid(self)
-        oddeven.transit(self, cap_b=cap_b)
+        oddeven.transit(self, cap_b=cap_b, max_RpRs=max_RpRs)
         if verbose:
             print("Checking individual transit events...")
         individual.transit_events(self, frac=frac, gap=gap)

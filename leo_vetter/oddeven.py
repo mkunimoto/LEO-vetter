@@ -51,6 +51,8 @@ def trapezoid(tlc):
             tlc.metrics["trap_qin"],
             tlc.metrics["trap_zpt"],
         )
+        tm.params["epo"].min = tlc.metrics["trap_epo"]-0.1*tlc.metrics["trap_per"]
+        tm.params["epo"].max = tlc.metrics["trap_epo"]+0.1*tlc.metrics["trap_per"]
         for param in ["per", "qtran", "qin", "zpt"]:
             tm.params[param].vary = False
         phase = np.mod(tlc.time - tlc.epo, 2 * tlc.per) / tlc.per
@@ -120,7 +122,7 @@ def trapezoid(tlc):
     )
 
 
-def transit(tlc, cap_b=True):
+def transit(tlc, cap_b=True, max_RpRs=1):
     try:
         if np.isnan(tlc.metrics["transit_aic"]):
             raise ValueError
@@ -133,10 +135,17 @@ def transit(tlc, cap_b=True):
             tlc.metrics["transit_u1"],
             tlc.metrics["transit_u2"],
             tlc.metrics["transit_zpt"],
-            cap_b=cap_b,
         )
+        tm.params["epo"].min = tlc.metrics["transit_epo"]-0.1*tlc.metrics["transit_per"]
+        tm.params["epo"].max = tlc.metrics["transit_epo"]+0.1*tlc.metrics["transit_per"]
         for param in ["per", "b", "aRs", "zpt"]:
             tm.params[param].vary = False
+        if cap_b:
+            tm.params["b"].max = 1
+            tm.params["RpRs"].max = max_RpRs
+        else:
+            tm.params.add("delta", value=tlc.metrics["transit_b"]-tlc.metrics["transit_RpRs"], max=1)
+            tm.params["RpRs"].set(expr="b-delta")
         phase = np.mod((tlc.time - tlc.epo) / tlc.per, 2)
         phase[phase > 1] -= 2
         odd_RpRs, odd_RpRs_err = np.nan, np.nan
